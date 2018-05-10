@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: docker pull rabits/qt:5.10-desktop
+      - image: rabits/qt:5.10-desktop
     steps:
       - checkout
       - run:
