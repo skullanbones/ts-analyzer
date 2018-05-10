@@ -35,6 +35,14 @@ void MainWindow::createActions()
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
     QAction *aboutAct = helpMenu->addAction(tr("&About"), this, &MainWindow::about);
     aboutAct->setStatusTip(tr("Show the application's About box"));
+
+
+    fileMenu->addSeparator();
+
+    const QIcon exitIcon = QIcon::fromTheme("application-exit");
+    QAction *exitAct = fileMenu->addAction(exitIcon, tr("E&xit"), this, &QWidget::close);
+    exitAct->setShortcuts(QKeySequence::Quit);
+    exitAct->setStatusTip(tr("Exit the application"));
 }
 
 void MainWindow::about()
