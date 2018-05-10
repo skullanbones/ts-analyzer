@@ -8,5 +8,3 @@ jobs:
       - run:
           name: Build
           command: qmake
-          command: make clean
-          command: make
