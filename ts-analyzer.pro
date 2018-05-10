@@ -14,8 +14,9 @@ TEMPLATE = app
 # 3rd-party libs
 LIBS += -L"$$_PRO_FILE_PWD_/ts-lib/libs" -lts
 INCLUDEPATH += "$$_PRO_FILE_PWD_"/ts-lib/inc
-message("testing.....")
-message($$_PRO_FILE_PWD_)
+
+# Resources/assets
+RESOURCES     = application.qrc
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
