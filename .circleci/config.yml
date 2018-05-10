@@ -2,10 +2,11 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/build-image:ubuntu-14.04-XXL-1327-3401d20
+      - image: docker pull rabits/qt:5.10-desktop
     steps:
       - checkout
       - run:
           name: Build
           command: qmake
+	  command: make clean
           command: make
