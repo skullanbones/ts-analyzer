@@ -34,8 +34,9 @@ void MainWindow::closeEvent(QCloseEvent *)
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
-    if (event->mimeData()->hasUrls())
+    if (event->mimeData()->hasUrls()) {
         event->accept();
+    }
 }
 
 
@@ -211,11 +212,13 @@ void MainWindow::init()
 
 void MainWindow::createActions()
 {
+    // Open
     openAct = new QAction(QIcon(":/images/open.png"), tr("&Open..."), this);
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open an existing file"));
     connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
 
+    // Save
     saveAct = new QAction(QIcon(":/images/save.png"), tr("&Save"), this);
     saveAct->setShortcuts(QKeySequence::Save);
     saveAct->setStatusTip(tr("Save the document to disk"));
@@ -236,10 +239,12 @@ void MainWindow::createActions()
     exitAct->setStatusTip(tr("Exit the application"));
     connect(exitAct, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
 
+    // Undo
     undoAct = new QAction(QIcon(":/images/undo.png"), tr("&Undo"), this);
     undoAct->setShortcuts(QKeySequence::Undo);
     connect(undoAct, SIGNAL(triggered()), hexEdit, SLOT(undo()));
 
+    // Redo
     redoAct = new QAction(QIcon(":/images/redo.png"), tr("&Redo"), this);
     redoAct->setShortcuts(QKeySequence::Redo);
     connect(redoAct, SIGNAL(triggered()), hexEdit, SLOT(redo()));
@@ -256,6 +261,7 @@ void MainWindow::createActions()
     aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
+    // Find
     findAct = new QAction(QIcon(":/images/find.png"), tr("&Find/Replace"), this);
     findAct->setShortcuts(QKeySequence::Find);
     findAct->setStatusTip(tr("Show the Dialog for finding and replacing"));
@@ -270,7 +276,8 @@ void MainWindow::createActions()
     optionsAct->setStatusTip(tr("Show the Dialog to select applications options"));
     connect(optionsAct, SIGNAL(triggered()), this, SLOT(showOptionsDialog()));
 
-    parserAct = new QAction(tr("&Parser"), this);
+    // Parser
+    parserAct = new QAction(QIcon(":/images/parse_icon.png"), tr("&Parser"), this);
     parserAct->setStatusTip(tr("Show the Dialog to parse the input transport stream"));
     connect(parserAct, SIGNAL(triggered()), this, SLOT(showParserDialog()));
 }
@@ -349,6 +356,8 @@ void MainWindow::createToolBars()
     editToolBar->addAction(undoAct);
     editToolBar->addAction(redoAct);
     editToolBar->addAction(findAct);
+    _parserToolBar = addToolBar(tr("Parser"));
+    _parserToolBar->addAction(parserAct);
 }
 
 void MainWindow::loadFile(const QString &fileName)

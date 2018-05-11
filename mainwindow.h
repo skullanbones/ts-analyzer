@@ -69,6 +69,7 @@ private:
 
     QToolBar *fileToolBar;
     QToolBar *editToolBar;
+    QToolBar *_parserToolBar;
 
     QAction *openAct;
     QAction *saveAct;
