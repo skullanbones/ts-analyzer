@@ -34,11 +34,24 @@ private slots:
      */
     void about();
 
+    /*!
+     * \brief Opens a file to parse.
+     */
+    void open();
+
 private:
     /*!
      * \brief createActions Creates the menus and toolbar.
      */
     void createActions();
+
+    /*!
+     * \brief Set current file to parse data.
+     * \param fileName
+     */
+    void setCurrentFile(const QString &fileName);
+
+    QString curFile;
 
     Ui::MainWindow *ui;
 

@@ -10,6 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ts-analyzer
 TEMPLATE = app
+CONFIG += c++11
 
 # 3rd-party libs
 LIBS += -L"$$_PRO_FILE_PWD_/ts-lib/libs" -lts
