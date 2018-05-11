@@ -56,11 +56,6 @@ FORMS += \
 OTHER_FILES += \
     README.md
 
-TRANSLATIONS += \
-    translations/ts-analyzer_cs.ts \
-    translations/ts-analyzer_de.ts \
-    translations/ts-analyzer_ru.ts \
-
 DEFINES += QHEXEDIT_EXPORTS
 
 # The following define makes your compiler emit warnings if you use
