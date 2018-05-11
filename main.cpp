@@ -1,20 +1,24 @@
-#include "mainwindow.h"
 #include <QApplication>
-#include <QtDebug>
+#include <QIcon>
 
-#include "TsStandards.h"
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(application);
-
     QApplication app(argc, argv);
-    QCoreApplication::setOrganizationName("Company AB");
-    QCoreApplication::setApplicationName("Transportstream Analyzer");
-    qDebug() << "Hello World!" << TS_PACKET_SYNC_BYTE;
+    app.setApplicationName("Transportstream Analyzer");
+    app.setOrganizationName("Company AB");
+    app.setWindowIcon(QIcon(":images/ts-analyzer.ico"));
 
-    MainWindow w;
-    w.show();
+    // Identify locale and load translation if available
+//    QString locale = QLocale::system().name();
+//    QTranslator translator;
+//    translator.load(QString("qhexedit_") + locale);
+//    app.installTranslator(&translator);
+
+    MainWindow *mainWin = new MainWindow;
+    mainWin->show();
 
     return app.exec();
 }
