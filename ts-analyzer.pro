@@ -13,37 +13,44 @@ CONFIG += c++11
 HEADERS = \
     mainwindow.h \
     optionsdialog.h \
-    qhexedit2/qhexedit.h \
-    qhexedit2/chunks.h \
-    qhexedit2/commands.h \
     searchdialog.h \
     parserdialog.h
-
-# 3rd-party libs
-LIBS += -L"$$_PRO_FILE_PWD_/ts-lib/libs" -lts
-INCLUDEPATH += "$$_PRO_FILE_PWD_"/ts-lib/inc
-
-HEADERS += \
-    ts-lib/inc/TsStatistics.h \
-    ts-lib/inc/TsStandards.h \
-    ts-lib/inc/TsParser.h \
-    ts-lib/inc/TsPacketInfo.h \
-    ts-lib/inc/TsDemuxer.h \
-    ts-lib/inc/PsiTables.h \
-    ts-lib/inc/PesPacket.h \
-    ts-lib/inc/GetBits.hh \
-    ts-lib/inc/GetBits.h \
-    ts-lib/inc/CommonTypes.h
 
 SOURCES = \
     main.cpp \
     mainwindow.cpp \
     optionsdialog.cpp \
-    qhexedit2/qhexedit.cpp \
-    qhexedit2/chunks.cpp \
-    qhexedit2/commands.cpp \
     searchdialog.cpp \
     parserdialog.cpp
+
+### 3rd-party libs ###
+# ts-lib
+LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/ts-lib/libs" -lts
+INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/ts-lib/inc
+INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/qhexedit2
+
+HEADERS += \
+    3rdparty/ts-lib/inc/TsStatistics.h \
+    3rdparty/ts-lib/inc/TsStandards.h \
+    3rdparty/ts-lib/inc/TsParser.h \
+    3rdparty/ts-lib/inc/TsPacketInfo.h \
+    3rdparty/ts-lib/inc/TsDemuxer.h \
+    3rdparty/ts-lib/inc/PsiTables.h \
+    3rdparty/ts-lib/inc/PesPacket.h \
+    3rdparty/ts-lib/inc/GetBits.hh \
+    3rdparty/ts-lib/inc/GetBits.h \
+    3rdparty/ts-lib/inc/CommonTypes.h
+
+# hexedit2
+HEADERS += \
+    3rdparty/qhexedit2/qhexedit.h \
+    3rdparty/qhexedit2/chunks.h \
+    3rdparty/qhexedit2/commands.h \
+
+SOURCES += \
+    3rdparty/qhexedit2/qhexedit.cpp \
+    3rdparty/qhexedit2/chunks.cpp \
+    3rdparty/qhexedit2/commands.cpp \
 
 RESOURCES = \
     application.qrc
