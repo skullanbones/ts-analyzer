@@ -32,6 +32,7 @@ CharCommand::CharCommand(Chunks * chunks, CCmd cmd, qint64 charPos, char newChar
     _charPos = charPos;
     _wasChanged = false;
     _newChar = newChar;
+    _oldChar = (char)0;
     _cmd = cmd;
 }
 
