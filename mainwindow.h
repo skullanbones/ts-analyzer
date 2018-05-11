@@ -90,7 +90,7 @@ private:
     QAction *parserAct;
 
     QHexEdit *hexEdit;
-    OptionsDialog *optionsDialog;
+    OptionsDialog *_optionsDialog;
     ParserDialog *_parserDialog;
     SearchDialog *searchDialog;
     QLabel *lbAddress, *lbAddressName;

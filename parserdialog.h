@@ -18,6 +18,7 @@ public:
     Ui::Dialog *_ui;
 
 private slots:
+    void on_parseButton_clicked();
 
 private:
     QHexEdit *_hexEdit;

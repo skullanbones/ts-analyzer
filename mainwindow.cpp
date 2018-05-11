@@ -169,7 +169,7 @@ void MainWindow::setSize(qint64 size)
 
 void MainWindow::showOptionsDialog()
 {
-    optionsDialog->show();
+    _optionsDialog->show();
 }
 
 void MainWindow::showSearchDialog()
@@ -188,8 +188,8 @@ void MainWindow::showParserDialog()
 void MainWindow::init()
 {
     setAttribute(Qt::WA_DeleteOnClose);
-    optionsDialog = new OptionsDialog(this);
-    connect(optionsDialog, SIGNAL(accepted()), this, SLOT(optionsAccepted()));
+    _optionsDialog = new OptionsDialog(this);
+    connect(_optionsDialog, SIGNAL(accepted()), this, SLOT(optionsAccepted()));
     isUntitled = true;
 
     hexEdit = new QHexEdit;
