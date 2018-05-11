@@ -277,7 +277,7 @@ void MainWindow::createActions()
     connect(optionsAct, SIGNAL(triggered()), this, SLOT(showOptionsDialog()));
 
     // Parser
-    parserAct = new QAction(QIcon(":/images/parse_icon.png"), tr("&Parser"), this);
+    parserAct = new QAction(QIcon(":/images/parser_icon.png"), tr("&Parser"), this);
     parserAct->setStatusTip(tr("Show the Dialog to parse the input transport stream"));
     connect(parserAct, SIGNAL(triggered()), this, SLOT(showParserDialog()));
 }
