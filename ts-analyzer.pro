@@ -4,39 +4,26 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ts-analyzer
-TEMPLATE = app
 CONFIG += c++11
+
+HEADERS = \
+    mainwindow.h \
+    optionsdialog.h \
+    qhexedit2/qhexedit.h \
+    qhexedit2/chunks.h \
+    qhexedit2/commands.h \
+    searchdialog.h \
+    parserdialog.h
 
 # 3rd-party libs
 LIBS += -L"$$_PRO_FILE_PWD_/ts-lib/libs" -lts
 INCLUDEPATH += "$$_PRO_FILE_PWD_"/ts-lib/inc
 
-# Resources/assets
-RESOURCES     = application.qrc
-
-# The following define makes your compiler emit warnings if you use
-# any feature of Qt which has been marked as deprecated (the exact warnings
-# depend on your compiler). Please consult the documentation of the
-# deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
-
-# You can also make your code fail to compile if you use deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
-
-SOURCES += \
-        main.cpp \
-        mainwindow.cpp
-
 HEADERS += \
-        mainwindow.h \
     ts-lib/inc/TsStatistics.h \
     ts-lib/inc/TsStandards.h \
     ts-lib/inc/TsParser.h \
@@ -48,8 +35,31 @@ HEADERS += \
     ts-lib/inc/GetBits.h \
     ts-lib/inc/CommonTypes.h
 
-FORMS += \
-        mainwindow.ui
+SOURCES = \
+    main.cpp \
+    mainwindow.cpp \
+    optionsdialog.cpp \
+    qhexedit2/qhexedit.cpp \
+    qhexedit2/chunks.cpp \
+    qhexedit2/commands.cpp \
+    searchdialog.cpp \
+    parserdialog.cpp
 
-DISTFILES += \
+RESOURCES = \
+    application.qrc
+
+FORMS += \
+    optionsdialog.ui \
+    searchdialog.ui \
+    parserdialog.ui
+
+OTHER_FILES += \
     README.md
+
+DEFINES += QHEXEDIT_EXPORTS
+
+# The following define makes your compiler emit warnings if you use
+# any feature of Qt which has been marked as deprecated (the exact warnings
+# depend on your compiler). Please consult the documentation of the
+# deprecated API in order to know how to port your code away from it.
+DEFINES += QT_DEPRECATED_WARNINGS

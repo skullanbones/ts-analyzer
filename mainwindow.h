@@ -3,15 +3,18 @@
 
 #include <QMainWindow>
 
-namespace Ui {
-class MainWindow;
-}
+#include "qhexedit2/qhexedit.h"
+#include "optionsdialog.h"
+#include "searchdialog.h"
+#include "parserdialog.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
 class QMenu;
-class QPlainTextEdit;
-class QSessionManager;
+class QUndoStack;
+class QLabel;
+class QDragEnterEvent;
+class QDropEvent;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -19,43 +22,80 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    MainWindow();
 
-    /*!
-     * \brief loadFile Loads a file from file system.
-     * \param fileName File to load.
-     */
-    void loadFile(const QString &fileName);
+protected:
+    void closeEvent(QCloseEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
 
 private slots:
-    /*!
-     * \brief Present an about widget window.
-     */
     void about();
-
-    /*!
-     * \brief Opens a file to parse.
-     */
+    void dataChanged();
     void open();
+    void optionsAccepted();
+    void findNext();
+    bool save();
+    bool saveAs();
+    void saveSelectionToReadableFile();
+    void saveToReadableFile();
+    void setAddress(qint64 address);
+    void setOverwriteMode(bool mode);
+    void setSize(qint64 size);
+    void showOptionsDialog();
+    void showSearchDialog();
+    void showParserDialog();
 
 private:
-    /*!
-     * \brief createActions Creates the menus and toolbar.
-     */
+    void init();
     void createActions();
-
-    /*!
-     * \brief Set current file to parse data.
-     * \param fileName
-     */
+    void createMenus();
+    void createStatusBar();
+    void createToolBars();
+    void loadFile(const QString &fileName);
+    void readSettings();
+    bool saveFile(const QString &fileName);
     void setCurrentFile(const QString &fileName);
+    QString strippedName(const QString &fullFileName);
+    void writeSettings();
 
     QString curFile;
+    QFile file;
+    bool isUntitled;
+    
+    QMenu *fileMenu;
+    QMenu *editMenu;
+    QMenu *helpMenu;
 
-    Ui::MainWindow *ui;
+    QToolBar *fileToolBar;
+    QToolBar *editToolBar;
 
-    QPlainTextEdit *textEdit;
+    QAction *openAct;
+    QAction *saveAct;
+    QAction *saveAsAct;
+    QAction *saveReadable;
+    QAction *closeAct;
+    QAction *exitAct;
+
+    QAction *undoAct;
+    QAction *redoAct;
+    QAction *saveSelectionReadable;
+
+    QAction *aboutAct;
+    QAction *aboutQtAct;
+    QAction *optionsAct;
+    QAction *findAct;
+    QAction *findNextAct;
+
+    QAction *parserAct;
+
+    QHexEdit *hexEdit;
+    OptionsDialog *_optionsDialog;
+    ParserDialog *_parserDialog;
+    SearchDialog *searchDialog;
+    QLabel *lbAddress, *lbAddressName;
+    QLabel *lbOverwriteMode, *lbOverwriteModeName;
+    QLabel *lbSize, *lbSizeName;
 };
 
-#endif // MAINWINDOW_H
+#endif
