@@ -42,8 +42,9 @@ OTHER_FILES += \
     README.md
 
 TRANSLATIONS += \
-    translations/qhexedit_cs.ts \
-    translations/qhexedit_de.ts
+    translations/ts-analyzer_cs.ts \
+    translations/ts-analyzer_de.ts \
+    translations/ts-analyzer_ru.ts \
 
 DEFINES += QHEXEDIT_EXPORTS
 
