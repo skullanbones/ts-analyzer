@@ -6,6 +6,7 @@
 #include "qhexedit2/qhexedit.h"
 #include "optionsdialog.h"
 #include "searchdialog.h"
+#include "parserdialog.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -43,6 +44,7 @@ private slots:
     void setSize(qint64 size);
     void showOptionsDialog();
     void showSearchDialog();
+    void showParserDialog();
 
 private:
     void init();
@@ -85,8 +87,11 @@ private:
     QAction *findAct;
     QAction *findNextAct;
 
+    QAction *parserAct;
+
     QHexEdit *hexEdit;
     OptionsDialog *optionsDialog;
+    ParserDialog *_parserDialog;
     SearchDialog *searchDialog;
     QLabel *lbAddress, *lbAddressName;
     QLabel *lbOverwriteMode, *lbOverwriteModeName;

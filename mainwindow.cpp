@@ -177,6 +177,11 @@ void MainWindow::showSearchDialog()
     searchDialog->show();
 }
 
+void MainWindow::showParserDialog()
+{
+    _parserDialog->show();
+}
+
 /*****************************************************************************/
 /* Private Methods */
 /*****************************************************************************/
@@ -192,6 +197,7 @@ void MainWindow::init()
     connect(hexEdit, SIGNAL(overwriteModeChanged(bool)), this, SLOT(setOverwriteMode(bool)));
     connect(hexEdit, SIGNAL(dataChanged()), this, SLOT(dataChanged()));
     searchDialog = new SearchDialog(hexEdit, this);
+    _parserDialog = new ParserDialog(hexEdit, this);
 
     createActions();
     createMenus();
@@ -263,6 +269,10 @@ void MainWindow::createActions()
     optionsAct = new QAction(tr("&Options"), this);
     optionsAct->setStatusTip(tr("Show the Dialog to select applications options"));
     connect(optionsAct, SIGNAL(triggered()), this, SLOT(showOptionsDialog()));
+
+    parserAct = new QAction(tr("&Parser"), this);
+    parserAct->setStatusTip(tr("Show the Dialog to parse the input transport stream"));
+    connect(parserAct, SIGNAL(triggered()), this, SLOT(showParserDialog()));
 }
 
 void MainWindow::createMenus()
@@ -284,6 +294,8 @@ void MainWindow::createMenus()
     editMenu->addAction(findNextAct);
     editMenu->addSeparator();
     editMenu->addAction(optionsAct);
+    editMenu->addSeparator();
+    editMenu->addAction(parserAct);
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);

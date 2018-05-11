@@ -16,11 +16,24 @@ HEADERS = \
     qhexedit2/qhexedit.h \
     qhexedit2/chunks.h \
     qhexedit2/commands.h \
-    searchdialog.h
+    searchdialog.h \
+    parserdialog.h
 
 # 3rd-party libs
 LIBS += -L"$$_PRO_FILE_PWD_/ts-lib/libs" -lts
 INCLUDEPATH += "$$_PRO_FILE_PWD_"/ts-lib/inc
+
+HEADERS += \
+    ts-lib/inc/TsStatistics.h \
+    ts-lib/inc/TsStandards.h \
+    ts-lib/inc/TsParser.h \
+    ts-lib/inc/TsPacketInfo.h \
+    ts-lib/inc/TsDemuxer.h \
+    ts-lib/inc/PsiTables.h \
+    ts-lib/inc/PesPacket.h \
+    ts-lib/inc/GetBits.hh \
+    ts-lib/inc/GetBits.h \
+    ts-lib/inc/CommonTypes.h
 
 SOURCES = \
     main.cpp \
@@ -29,14 +42,16 @@ SOURCES = \
     qhexedit2/qhexedit.cpp \
     qhexedit2/chunks.cpp \
     qhexedit2/commands.cpp \
-    searchdialog.cpp
+    searchdialog.cpp \
+    parserdialog.cpp
 
 RESOURCES = \
     application.qrc
 
 FORMS += \
     optionsdialog.ui \
-    searchdialog.ui
+    searchdialog.ui \
+    parserdialog.ui
 
 OTHER_FILES += \
     README.md
