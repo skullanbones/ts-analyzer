@@ -277,9 +277,9 @@ void MainWindow::createActions()
     connect(optionsAct, SIGNAL(triggered()), this, SLOT(showOptionsDialog()));
 
     // Parser
-    parserAct = new QAction(QIcon(":/images/parser_icon.png"), tr("&Parser"), this);
-    parserAct->setStatusTip(tr("Show the Dialog to parse the input transport stream"));
-    connect(parserAct, SIGNAL(triggered()), this, SLOT(showParserDialog()));
+    _parserAct = new QAction(QIcon(":/images/parser_icon.png"), tr("&Parser"), this);
+    _parserAct->setStatusTip(tr("Show the Dialog to parse the input transport stream"));
+    connect(_parserAct, SIGNAL(triggered()), this, SLOT(showParserDialog()));
 }
 
 void MainWindow::createMenus()
@@ -302,7 +302,7 @@ void MainWindow::createMenus()
     editMenu->addSeparator();
     editMenu->addAction(optionsAct);
     editMenu->addSeparator();
-    editMenu->addAction(parserAct);
+    editMenu->addAction(_parserAct);
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
@@ -357,7 +357,7 @@ void MainWindow::createToolBars()
     editToolBar->addAction(redoAct);
     editToolBar->addAction(findAct);
     _parserToolBar = addToolBar(tr("Parser"));
-    _parserToolBar->addAction(parserAct);
+    _parserToolBar->addAction(_parserAct);
 }
 
 void MainWindow::loadFile(const QString &fileName)
@@ -433,9 +433,9 @@ void MainWindow::setCurrentFile(const QString &fileName)
     isUntitled = fileName.isEmpty();
     setWindowModified(false);
     if (fileName.isEmpty())
-        setWindowFilePath("QHexEdit");
+        setWindowFilePath("TsAnalyzer");
     else
-        setWindowFilePath(curFile + " - QHexEdit");
+        setWindowFilePath(curFile + " - TsAnalyzer");
 }
 
 QString MainWindow::strippedName(const QString &fullFileName)
