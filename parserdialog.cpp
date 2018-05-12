@@ -104,4 +104,5 @@ void ParserDialog::parsePat()
         readIndex += TS_PACKET_SIZE;
         count++;
     }
+    qDebug() << "Found " << count << " ts packets.";
 }
