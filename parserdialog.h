@@ -33,7 +33,7 @@ private:
 
     QHexEdit* _hexEdit;
     QTextBrowser* _textBrowser;
-    TsDemuxer g_tsDemux;
+    TsDemuxer _tsDemux;
 };
 
 

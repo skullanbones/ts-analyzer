@@ -90,7 +90,7 @@ void ParserDialog::parsePat()
     int readIndex = 0;
     const uint8_t* packetsData = (const uint8_t*)data.data();
     // Register callback
-    g_tsDemux.addPsiPid(0, std::bind(&ParserDialog::PATCallback, std::placeholders::_1));
+    _tsDemux.addPsiPid(0, std::bind(&ParserDialog::PATCallback, std::placeholders::_1));
 
     if ((data.at(0) != 0x47) || (data.size() <= 0))
     {
@@ -100,7 +100,7 @@ void ParserDialog::parsePat()
 
     while (readIndex < data.size())
     {
-        g_tsDemux.demux(packetsData + readIndex);
+        _tsDemux.demux(packetsData + readIndex);
         readIndex += TS_PACKET_SIZE;
         count++;
     }
