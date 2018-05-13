@@ -68,12 +68,13 @@ void ParserDialog::parseData()
 void ParserDialog::printData(std::string inStr)
 {
     QString str = QString::fromUtf8(inStr.c_str());
-    _ui->textBrowser->setText(str);
+    _textBrowser->append(str);
 }
 
-void ParserDialog::PATCallback(PsiTable* table)
+void ParserDialog::PATCallback(PsiTable* table, void* hdl)
 {
     auto pat = dynamic_cast<PatTable*>(table);
+    ParserDialog* instance = reinterpret_cast<ParserDialog*>(hdl);
 
     // Print out data
     std::stringstream buffer;
@@ -81,6 +82,7 @@ void ParserDialog::PATCallback(PsiTable* table)
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
     qDebug() << str;
+    instance->printData(buffer.str());
 }
 
 void ParserDialog::parsePat()
@@ -90,7 +92,7 @@ void ParserDialog::parsePat()
     int readIndex = 0;
     const uint8_t* packetsData = (const uint8_t*)data.data();
     // Register callback
-    _tsDemux.addPsiPid(0, std::bind(&ParserDialog::PATCallback, std::placeholders::_1));
+    _tsDemux.addPsiPid(0, std::bind(&ParserDialog::PATCallback, std::placeholders::_1, std::placeholders::_2), (void*) this);
 
     if ((data.at(0) != 0x47) || (data.size() <= 0))
     {

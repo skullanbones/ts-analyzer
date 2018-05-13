@@ -28,7 +28,7 @@ private:
     void init();
     void parseData();
     void printData(std::string str);
-    void static PATCallback(PsiTable* table);
+    void static PATCallback(PsiTable* table, void* hdl);
     void parsePat();
 
     QHexEdit* _hexEdit;
