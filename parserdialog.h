@@ -3,7 +3,11 @@
 
 #include <QDialog>
 #include <QtCore>
+#include <QTextBrowser>
+
+// Project files
 #include "qhexedit.h"
+#include "TsDemuxer.h"
 
 namespace Ui {
     class Dialog;
@@ -15,13 +19,21 @@ class ParserDialog : public QDialog
 public:
     explicit ParserDialog(QHexEdit *hexEdit, QWidget *parent = 0);
     ~ParserDialog();
-    Ui::Dialog *_ui;
+    Ui::Dialog* _ui;
 
 private slots:
     void on_parseButton_clicked();
 
 private:
-    QHexEdit *_hexEdit;
+    void init();
+    void parseData();
+    void printData(std::string str);
+    void static PATCallback(PsiTable* table, void* hdl);
+    void parsePat();
+
+    QHexEdit* _hexEdit;
+    QTextBrowser* _textBrowser;
+    TsDemuxer _tsDemux;
 };
 
 

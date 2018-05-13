@@ -5,6 +5,7 @@
         <file>images/undo.png</file>
         <file>images/redo.png</file>
         <file>images/find.png</file>
+	<file>images/parser_icon.png</file>
         <file>images/ts-analyzer.ico</file>
     </qresource>
 </RCC>

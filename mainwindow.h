@@ -59,17 +59,23 @@ private:
     QString strippedName(const QString &fullFileName);
     void writeSettings();
 
+    // Members
     QString curFile;
     QFile file;
     bool isUntitled;
+    QHexEdit *hexEdit;
     
+    // Menus
     QMenu *fileMenu;
     QMenu *editMenu;
     QMenu *helpMenu;
 
+    // Toolbars
     QToolBar *fileToolBar;
     QToolBar *editToolBar;
+    QToolBar *_parserToolBar;
 
+    // Actions
     QAction *openAct;
     QAction *saveAct;
     QAction *saveAsAct;
@@ -87,12 +93,13 @@ private:
     QAction *findAct;
     QAction *findNextAct;
 
-    QAction *parserAct;
+    QAction *_parserAct;
 
-    QHexEdit *hexEdit;
+    // Widgets
     OptionsDialog *_optionsDialog;
     ParserDialog *_parserDialog;
     SearchDialog *searchDialog;
+
     QLabel *lbAddress, *lbAddressName;
     QLabel *lbOverwriteMode, *lbOverwriteModeName;
     QLabel *lbSize, *lbSizeName;
