@@ -6,8 +6,8 @@ jobs:
     steps:
       - checkout:
           post:
-            - git submodule sync
-            - git submodule update --init
+            - git submodule sync --recursive
+            - git submodule update --recursive --init
       - run:
           name: Qmake
           command: qmake
