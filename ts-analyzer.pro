@@ -24,22 +24,27 @@ SOURCES = \
     parserdialog.cpp
 
 ### 3rd-party libs ###
-# ts-lib
-LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/ts-lib/libs" -lts
-INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/ts-lib/inc
 INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/qhexedit2
+INCLUDEPATH += "$$_PRO_FILE_PWD_"/ts-lib/include
 
+# ts-lib
 HEADERS += \
-    3rdparty/ts-lib/inc/TsStatistics.h \
-    3rdparty/ts-lib/inc/TsStandards.h \
-    3rdparty/ts-lib/inc/TsParser.h \
-    3rdparty/ts-lib/inc/TsPacketInfo.h \
-    3rdparty/ts-lib/inc/TsDemuxer.h \
-    3rdparty/ts-lib/inc/PsiTables.h \
-    3rdparty/ts-lib/inc/PesPacket.h \
-    3rdparty/ts-lib/inc/GetBits.hh \
-    3rdparty/ts-lib/inc/GetBits.h \
-    3rdparty/ts-lib/inc/CommonTypes.h
+    ts-lib/include/TsStatistics.h \
+    ts-lib/include/TsStandards.h \
+    ts-lib/include/TsParser.h \
+    ts-lib/include/TsPacketInfo.h \
+    ts-lib/include/TsDemuxer.h \
+    ts-lib/include/PsiTables.h \
+    ts-lib/include/PesPacket.h \
+    ts-lib/include/GetBits.hh \
+    ts-lib/include/GetBits.h \
+    ts-lib/include/CommonTypes.h
+
+SOURCES += \
+    ts-lib/src/GetBits.cc \
+    ts-lib/src/TsDemuxer.cc \
+    ts-lib/src/TsParser.cc \
+    ts-lib/src/TsStatistics.cc \
 
 # hexedit2
 HEADERS += \
