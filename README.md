@@ -10,4 +10,8 @@ You also need to load the ts-lib submodule
 git submodule init
 git submodule update
 ```
+or
+```
+git submodule update --init
+```
 in order to be able to run this project successfully.
