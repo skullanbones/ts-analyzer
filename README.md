@@ -53,4 +53,4 @@ The different types of branches we may use are:
 * Hotfix branches
 
 This image shows the branching strategy:
-![alt text](https://github.com/skullanbones/ts-analyzer/tree/master/images/git-model@2x.png "Sandvik")
+![Git branching model](https://github.com/skullanbones/ts-analyzer/tree/master/images/git-model@2x.png)
