@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(application);
     QApplication app(argc, argv);
     app.setApplicationName("Transportstream Analyzer");
-    app.setOrganizationName("Company AB");
+    app.setOrganizationName("Quantronix AB");
     app.setWindowIcon(QIcon(":images/ts-analyzer.ico"));
 
     // Identify locale and load translation if available

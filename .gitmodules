@@ -1,0 +1,3 @@
+[submodule "ts-lib"]
+	path = ts-lib
+	url = git@github.com:skullanbones/ts-lib.git
