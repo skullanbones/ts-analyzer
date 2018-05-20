@@ -165,6 +165,9 @@ void ParserDialog::buildTreeView()
     {
         addTreeChild(pmtRoot, "ES", stream.elementary_PID, "Elementary Stream");
     }
+
+    // Add PRC PID
+    addTreeChild(pmtRoot, "PCR", _pmt.PCR_PID, "Program Clock Reference");
 }
 
 QTreeWidgetItem* ParserDialog::addTreeRoot(QString name,
