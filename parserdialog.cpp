@@ -163,7 +163,7 @@ void ParserDialog::buildTreeView()
 
     for (StreamTypeHeader stream : _pmt.streams)
     {
-        addTreeChild(pmtRoot, "ES", stream.elementary_PID, "Elementary Stream")
+        addTreeChild(pmtRoot, "ES", stream.elementary_PID, "Elementary Stream");
     }
 }
 
