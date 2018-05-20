@@ -58,7 +58,8 @@ void MainWindow::about()
 {
    QMessageBox::about(this, tr("About"),
             tr("<b>Transport Stream Analyzer</b> analyzes the content"
-               "of MPEG-2 transport stream used in video content delivery. "));
+               "of MPEG-2 transport stream used in video content delivery.<br/><br/>"
+               "<i>(C) Copyright 2018 Quantux AB. All rights reserved </i>"));
 }
 
 void MainWindow::dataChanged()

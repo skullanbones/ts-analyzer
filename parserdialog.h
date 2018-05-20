@@ -30,15 +30,17 @@ private:
     void parseData();
     void printData(std::string str);
     void static PATCallback(PsiTable* table, void* hdl);
-    void parsePat();
+    void static PMTCallback(PsiTable* table, void* hdl);
+    void parseTransportStream();
     void buildTreeView();
     QTreeWidgetItem* addTreeRoot(QString name,
                                  int PID,
                                  QString description);
-    void addTreeChild(QTreeWidgetItem *parent,
-                      QString name,
-                      int PID,
-                      QString description);
+
+    QTreeWidgetItem* addTreeChild(QTreeWidgetItem *parent,
+                                  QString name,
+                                  int PID,
+                                  QString description);
 
     QHexEdit* _hexEdit;
     QTextBrowser* _textBrowser;
@@ -47,6 +49,8 @@ private:
     // Parsing stuff
     TsDemuxer _tsDemuxer;
     std::vector<int> _pmtPids;
+    int _gPmtPid;
+    PmtTable _pmt;
 };
 
 

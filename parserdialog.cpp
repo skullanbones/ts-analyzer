@@ -31,7 +31,7 @@ void ParserDialog::on_parseButton_clicked()
 {
     qDebug() << "parseButton clicked->start parsing.";
     parseData();
-    parsePat();
+    parseTransportStream();
 }
 
 /*****************************************************************************/
@@ -46,7 +46,7 @@ void ParserDialog::init()
 
 void ParserDialog::parseData()
 {
-    printData("Hello World!");
+    printData("(C) Copyright 2018 All rights reserverd Quantux AB.");
     // Start parsing
     QByteArray data = _hexEdit->data();
     if (data.size()) {
@@ -85,7 +85,7 @@ void ParserDialog::PATCallback(PsiTable* table, void* hdl)
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
     qDebug() << str;
-    instance->printData(buffer.str());
+    //instance->printData(buffer.str());
 
     // Book keep all PATs for quality check
     instance->_pmtPids.push_back(pat->programs[0].program_map_PID);
@@ -93,9 +93,36 @@ void ParserDialog::PATCallback(PsiTable* table, void* hdl)
     instance->printData("average:");
     instance->printData(std::to_string(average));
     // Book keep number of programs, TODO use map std:pair<int, int> for PID, numberPrograms
+
+    // Register PMT callback only if PMT PID changed
+    int newPmtPid = pat->programs[0].program_map_PID;
+    if (instance->_gPmtPid != newPmtPid)
+    {
+        instance->_gPmtPid = newPmtPid;
+        // std::cout << "Single Program Transport Stream PID: " << g_PMTPID << std::endl;
+        instance->_tsDemuxer.addPsiPid(instance->_gPmtPid, std::bind(&ParserDialog::PMTCallback, std::placeholders::_1, std::placeholders::_2), hdl);
+    }
 }
 
-void ParserDialog::parsePat()
+void ParserDialog::PMTCallback(PsiTable* table, void* hdl)
+{
+    auto pmt = dynamic_cast<PmtTable*>(table);
+    ParserDialog* instance = reinterpret_cast<ParserDialog*>(hdl);
+
+    // Print out data
+    std::stringstream buffer;
+    buffer << *pmt << std::endl;
+    std::string inStr = buffer.str();
+    QString str = QString::fromUtf8(inStr.c_str());
+    qDebug() << str;
+    instance->printData(buffer.str());
+
+    // TODO for now we always use the last PMT in the stream.
+    // TODO need use something better...
+    instance->_pmt = *pmt; //  copy instance
+}
+
+void ParserDialog::parseTransportStream()
 {
     QByteArray data = _hexEdit->data();
     uint64_t count = 0;
@@ -131,8 +158,13 @@ void ParserDialog::buildTreeView()
 
     // TODO dynamic build upp depending on parsing findings...
     // Add root nodes
-    QTreeWidgetItem*  root = addTreeRoot("PAT", 0, "Program Association Table");
-    addTreeChild(root, "PMT", _pmtPids.at(2), "Program Map Table");
+    QTreeWidgetItem* root = addTreeRoot("PAT", 0, "Program Association Table");
+    QTreeWidgetItem* pmtRoot = addTreeChild(root, "PMT", _pmtPids.at(2), "Program Map Table");
+
+    for (StreamTypeHeader stream : _pmt.streams)
+    {
+        addTreeChild(pmtRoot, "ES", stream.elementary_PID, "Elementary Stream")
+    }
 }
 
 QTreeWidgetItem* ParserDialog::addTreeRoot(QString name,
@@ -147,7 +179,7 @@ QTreeWidgetItem* ParserDialog::addTreeRoot(QString name,
     return treeItem;
 }
 
-void ParserDialog::addTreeChild(QTreeWidgetItem *parent,
+QTreeWidgetItem* ParserDialog::addTreeChild(QTreeWidgetItem *parent,
                                 QString name,
                                 int PID,
                                 QString description)
@@ -162,4 +194,5 @@ void ParserDialog::addTreeChild(QTreeWidgetItem *parent,
 
     // QTreeWidgetItem::addChild(QTreeWidgetItem * child)
     parent->addChild(treeItem);
+    return treeItem;
 }
