@@ -1,4 +1,5 @@
 #include <QMessageBox>
+#include <QTreeWidgetItem>
 
 // proj files
 #include "parserdialog.h"
@@ -39,7 +40,9 @@ void ParserDialog::on_parseButton_clicked()
 void ParserDialog::init()
 {
     _textBrowser = _ui->textBrowser;
+    _treeWidget = _ui->treeWidget;
 }
+
 
 void ParserDialog::parseData()
 {
@@ -83,6 +86,13 @@ void ParserDialog::PATCallback(PsiTable* table, void* hdl)
     QString str = QString::fromUtf8(inStr.c_str());
     qDebug() << str;
     instance->printData(buffer.str());
+
+    // Book keep all PATs for quality check
+    instance->_pmtPids.push_back(pat->programs[0].program_map_PID);
+    float average = accumulate( instance->_pmtPids.begin(), instance->_pmtPids.end(), 0.0)/instance->_pmtPids.size();
+    instance->printData("average:");
+    instance->printData(std::to_string(average));
+    // Book keep number of programs, TODO use map std:pair<int, int> for PID, numberPrograms
 }
 
 void ParserDialog::parsePat()
@@ -92,7 +102,7 @@ void ParserDialog::parsePat()
     int readIndex = 0;
     const uint8_t* packetsData = (const uint8_t*)data.data();
     // Register callback
-    _tsDemux.addPsiPid(0, std::bind(&ParserDialog::PATCallback, std::placeholders::_1, std::placeholders::_2), (void*) this);
+    _tsDemuxer.addPsiPid(0, std::bind(&ParserDialog::PATCallback, std::placeholders::_1, std::placeholders::_2), (void*) this);
 
     if ((data.at(0) != 0x47) || (data.size() <= 0))
     {
@@ -102,9 +112,54 @@ void ParserDialog::parsePat()
 
     while (readIndex < data.size())
     {
-        _tsDemux.demux(packetsData + readIndex);
+        _tsDemuxer.demux(packetsData + readIndex);
         readIndex += TS_PACKET_SIZE;
         count++;
     }
     qDebug() << "Found " << count << " ts packets.";
+
+    buildTreeView();
+}
+
+void ParserDialog::buildTreeView()
+{
+    _treeWidget->setColumnCount(3);
+    QStringList ColumnNames;
+    ColumnNames << "Table" << "PID" << "Description";
+
+    _treeWidget->setHeaderLabels(ColumnNames);
+
+    // TODO dynamic build upp depending on parsing findings...
+    // Add root nodes
+    QTreeWidgetItem*  root = addTreeRoot("PAT", 0, "Program Association Table");
+    addTreeChild(root, "PMT", _pmtPids.at(2), "Program Map Table");
+}
+
+QTreeWidgetItem* ParserDialog::addTreeRoot(QString name,
+                                           int PID,
+                                           QString description)
+{
+    // QTreeWidgetItem(QTreeWidget * parent, int type = Type)
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem(_treeWidget);
+    treeItem->setText(0, name);
+    treeItem->setText(1, QString::number(PID));
+    treeItem->setText(2, description);
+    return treeItem;
+}
+
+void ParserDialog::addTreeChild(QTreeWidgetItem *parent,
+                                QString name,
+                                int PID,
+                                QString description)
+{
+    // QTreeWidgetItem(QTreeWidget * parent, int type = Type)
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+
+    // QTreeWidgetItem::setText(int column, const QString & text)
+    treeItem->setText(0, name);
+    treeItem->setText(1, QString::number(PID));
+    treeItem->setText(2, description);
+
+    // QTreeWidgetItem::addChild(QTreeWidgetItem * child)
+    parent->addChild(treeItem);
 }

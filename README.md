@@ -19,7 +19,7 @@ in order to be able to run this project successfully.
 ## Git stategy
 Note we use the most advanced git strategy NVIE. Please consult
 CM before you commit to this repo. In short there are 2 type categories
-of branche *main branches* and *supporting branches*.
+of branches *main branches* and *supporting branches*.
 
 
 ### Main branches
