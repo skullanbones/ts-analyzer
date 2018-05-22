@@ -125,6 +125,14 @@ void ParserDialog::PMTCallback(PsiTable* table, void* hdl)
 void ParserDialog::parseTransportStream()
 {
     QByteArray data = _hexEdit->data();
+
+    // If empty data, just return
+    if (data.size() <= 0) {
+        printData("No data to parse... data().size:");
+        printData(std::to_string(data.size()));
+        return;
+    }
+
     uint64_t count = 0;
     int readIndex = 0;
     const uint8_t* packetsData = (const uint8_t*)data.data();
@@ -150,20 +158,22 @@ void ParserDialog::parseTransportStream()
 
 void ParserDialog::buildTreeView()
 {
+    _treeWidget->clear();
     _treeWidget->setColumnCount(3);
     QStringList ColumnNames;
     ColumnNames << "Table" << "PID" << "Description";
 
     _treeWidget->setHeaderLabels(ColumnNames);
 
-    // TODO dynamic build upp depending on parsing findings...
     // Add root nodes
     QTreeWidgetItem* root = addTreeRoot("PAT", 0, "Program Association Table");
     QTreeWidgetItem* pmtRoot = addTreeChild(root, "PMT", _pmtPids.at(2), "Program Map Table");
 
     for (StreamTypeHeader stream : _pmt.streams)
     {
-        addTreeChild(pmtRoot, "ES", stream.elementary_PID, "Elementary Stream");
+        std::string str = StreamTypeToString[stream.stream_type];
+        QString qstr = QString::fromStdString(str);
+        addTreeChild(pmtRoot, "PES", stream.elementary_PID, qstr);
     }
 
     // Add PRC PID
