@@ -207,8 +207,10 @@ void MainWindow::init()
     _hexEdit = new QHexEdit;
     _hexEdit->setFixedWidth(800); // Give space left to parser dialog...
 
-
     _parserDialog = new ParserDialog(_hexEdit, this);
+
+    // Connect events to parser
+    connect(this,SIGNAL(newFileLoaded()),_parserDialog,SLOT(on_parseButton_clicked()));
 
     // Dock widget use parser dialog
     QDockWidget* parserDockWidget = new QDockWidget(tr("Parser"));
@@ -400,6 +402,7 @@ void MainWindow::loadFile(const QString &fileName)
     }
     setCurrentFile(fileName);
     statusBar()->showMessage(tr("File loaded"), 2000);
+    emitNewFileLoaded();
 }
 
 void MainWindow::readSettings()
@@ -476,4 +479,9 @@ void MainWindow::writeSettings()
     QSettings settings;
     settings.setValue("pos", pos());
     settings.setValue("size", size());
+}
+
+void MainWindow::emitNewFileLoaded()
+{
+    emit newFileLoaded();
 }

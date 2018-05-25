@@ -36,6 +36,9 @@ protected:
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
 
+signals:
+   void newFileLoaded();
+
 private slots:
     void about();
     void dataChanged();
@@ -65,6 +68,7 @@ private:
     void setCurrentFile(const QString &fileName);
     QString strippedName(const QString &fullFileName);
     void writeSettings();
+    void emitNewFileLoaded();
 
     // Members
     QString curFile;
