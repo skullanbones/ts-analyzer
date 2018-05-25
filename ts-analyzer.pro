@@ -63,7 +63,8 @@ RESOURCES = \
 FORMS += \
     optionsdialog.ui \
     searchdialog.ui \
-    parserdialog.ui
+    parserdialog.ui \
+    mainwindow.ui
 
 OTHER_FILES += \
     README.md

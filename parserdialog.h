@@ -10,6 +10,7 @@
 #include "qhexedit.h"
 #include "TsDemuxer.h"
 
+// Forward declarations
 namespace Ui {
     class Dialog;
 }

@@ -6,29 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>636</width>
+    <width>579</width>
     <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Stream Metadata</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>250</y>
-     <width>161</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
   <widget class="QPushButton" name="parseButton">
    <property name="geometry">
     <rect>
@@ -47,7 +31,7 @@
     <rect>
      <x>20</x>
      <y>50</y>
-     <width>181</width>
+     <width>171</width>
      <height>191</height>
     </rect>
    </property>
@@ -59,14 +43,14 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>179</width>
+      <width>169</width>
       <height>189</height>
      </rect>
     </property>
     <widget class="QTextBrowser" name="textBrowser">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>-10</x>
        <y>0</y>
        <width>181</width>
        <height>191</height>
@@ -87,10 +71,10 @@
   <widget class="QTreeWidget" name="treeWidget">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>50</y>
-     <width>411</width>
-     <height>191</height>
+     <x>200</x>
+     <y>10</y>
+     <width>371</width>
+     <height>281</height>
     </rect>
    </property>
    <column>
@@ -101,38 +85,5 @@
   </widget>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

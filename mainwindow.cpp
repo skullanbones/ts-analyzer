@@ -10,17 +10,27 @@
 #include <QFontDialog>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QSplitter>
+#include <QDockWidget>
 
 #include "mainwindow.h"
+#include "ui_mainwindow.h"
 
 /*****************************************************************************/
 /* Public methods */
 /*****************************************************************************/
-MainWindow::MainWindow()
+MainWindow::MainWindow() :
+    _ui(new Ui::MainWindow)
 {
+    _ui->setupUi(this);
     setAcceptDrops( true );
     init();
     setCurrentFile("");
+}
+
+MainWindow::~MainWindow()
+{
+    delete _ui;
 }
 
 /*****************************************************************************/
@@ -64,7 +74,7 @@ void MainWindow::about()
 
 void MainWindow::dataChanged()
 {
-    setWindowModified(hexEdit->isModified());
+    setWindowModified(_hexEdit->isModified());
 }
 
 void MainWindow::open()
@@ -83,7 +93,7 @@ void MainWindow::optionsAccepted()
 
 void MainWindow::findNext()
 {
-    searchDialog->findNext();
+    _searchDialog->findNext();
 }
 
 bool MainWindow::save()
@@ -120,7 +130,7 @@ void MainWindow::saveSelectionToReadableFile()
         }
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
-        file.write(hexEdit->selectionToReadableString().toLatin1());
+        file.write(_hexEdit->selectionToReadableString().toLatin1());
         QApplication::restoreOverrideCursor();
 
         statusBar()->showMessage(tr("File saved"), 2000);
@@ -142,7 +152,7 @@ void MainWindow::saveToReadableFile()
         }
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
-        file.write(hexEdit->toReadableString().toLatin1());
+        file.write(_hexEdit->toReadableString().toLatin1());
         QApplication::restoreOverrideCursor();
 
         statusBar()->showMessage(tr("File saved"), 2000);
@@ -176,7 +186,7 @@ void MainWindow::showOptionsDialog()
 
 void MainWindow::showSearchDialog()
 {
-    searchDialog->show();
+    _searchDialog->show();
 }
 
 void MainWindow::showParserDialog()
@@ -194,12 +204,29 @@ void MainWindow::init()
     connect(_optionsDialog, SIGNAL(accepted()), this, SLOT(optionsAccepted()));
     isUntitled = true;
 
-    hexEdit = new QHexEdit;
-    setCentralWidget(hexEdit);
-    connect(hexEdit, SIGNAL(overwriteModeChanged(bool)), this, SLOT(setOverwriteMode(bool)));
-    connect(hexEdit, SIGNAL(dataChanged()), this, SLOT(dataChanged()));
-    searchDialog = new SearchDialog(hexEdit, this);
-    _parserDialog = new ParserDialog(hexEdit, this);
+    _hexEdit = new QHexEdit;
+    _hexEdit->setFixedWidth(800); // Give space left to parser dialog...
+
+
+    _parserDialog = new ParserDialog(_hexEdit, this);
+
+    // Dock widget use parser dialog
+    QDockWidget* parserDockWidget = new QDockWidget(tr("Parser"));
+    parserDockWidget->setWidget(_parserDialog);
+    parserDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    addDockWidget(Qt::RightDockWidgetArea, parserDockWidget);
+
+    // Used before to create horizontal space
+    QSplitter* mainSplitter = new QSplitter(Qt::Horizontal);
+    mainSplitter->addWidget(_hexEdit);
+    mainSplitter->setStretchFactor(1, 2);
+    setCentralWidget(mainSplitter);
+    setWindowTitle("Transportstream Analyzer");
+
+    //setCentralWidget(_hexEdit);
+    connect(_hexEdit, SIGNAL(overwriteModeChanged(bool)), this, SLOT(setOverwriteMode(bool)));
+    connect(_hexEdit, SIGNAL(dataChanged()), this, SLOT(dataChanged()));
+    _searchDialog = new SearchDialog(_hexEdit, this);
 
     createActions();
     createMenus();
@@ -243,12 +270,12 @@ void MainWindow::createActions()
     // Undo
     undoAct = new QAction(QIcon(":/images/undo.png"), tr("&Undo"), this);
     undoAct->setShortcuts(QKeySequence::Undo);
-    connect(undoAct, SIGNAL(triggered()), hexEdit, SLOT(undo()));
+    connect(undoAct, SIGNAL(triggered()), _hexEdit, SLOT(undo()));
 
     // Redo
     redoAct = new QAction(QIcon(":/images/redo.png"), tr("&Redo"), this);
     redoAct->setShortcuts(QKeySequence::Redo);
-    connect(redoAct, SIGNAL(triggered()), hexEdit, SLOT(redo()));
+    connect(redoAct, SIGNAL(triggered()), _hexEdit, SLOT(redo()));
 
     saveSelectionReadable = new QAction(tr("&Save Selection Readable..."), this);
     saveSelectionReadable->setStatusTip(tr("Save selection in readable form"));
@@ -321,7 +348,7 @@ void MainWindow::createStatusBar()
     lbAddress->setFrameShadow(QFrame::Sunken);
     lbAddress->setMinimumWidth(70);
     statusBar()->addPermanentWidget(lbAddress);
-    connect(hexEdit, SIGNAL(currentAddressChanged(qint64)), this, SLOT(setAddress(qint64)));
+    connect(_hexEdit, SIGNAL(currentAddressChanged(qint64)), this, SLOT(setAddress(qint64)));
 
     // Size Label
     lbSizeName = new QLabel();
@@ -332,7 +359,7 @@ void MainWindow::createStatusBar()
     lbSize->setFrameShadow(QFrame::Sunken);
     lbSize->setMinimumWidth(70);
     statusBar()->addPermanentWidget(lbSize);
-    connect(hexEdit, SIGNAL(currentSizeChanged(qint64)), this, SLOT(setSize(qint64)));
+    connect(_hexEdit, SIGNAL(currentSizeChanged(qint64)), this, SLOT(setSize(qint64)));
 
     // Overwrite Mode Label
     lbOverwriteModeName = new QLabel();
@@ -343,7 +370,7 @@ void MainWindow::createStatusBar()
     lbOverwriteMode->setFrameShadow(QFrame::Sunken);
     lbOverwriteMode->setMinimumWidth(70);
     statusBar()->addPermanentWidget(lbOverwriteMode);
-    setOverwriteMode(hexEdit->overwriteMode());
+    setOverwriteMode(_hexEdit->overwriteMode());
 
     statusBar()->showMessage(tr("Ready"), 2000);
 }
@@ -364,7 +391,7 @@ void MainWindow::createToolBars()
 void MainWindow::loadFile(const QString &fileName)
 {
     file.setFileName(fileName);
-    if (!hexEdit->setData(file)) {
+    if (!_hexEdit->setData(file)) {
         QMessageBox::warning(this, tr("QHexEdit"),
                              tr("Cannot read file %1:\n%2.")
                              .arg(fileName)
@@ -383,19 +410,19 @@ void MainWindow::readSettings()
     move(pos);
     resize(size);
 
-    hexEdit->setAddressArea(settings.value("AddressArea").toBool());
-    hexEdit->setAsciiArea(settings.value("AsciiArea").toBool());
-    hexEdit->setHighlighting(settings.value("Highlighting").toBool());
-    hexEdit->setOverwriteMode(settings.value("OverwriteMode").toBool());
-    hexEdit->setReadOnly(settings.value("ReadOnly").toBool());
+    _hexEdit->setAddressArea(settings.value("AddressArea").toBool());
+    _hexEdit->setAsciiArea(settings.value("AsciiArea").toBool());
+    _hexEdit->setHighlighting(settings.value("Highlighting").toBool());
+    _hexEdit->setOverwriteMode(settings.value("OverwriteMode").toBool());
+    _hexEdit->setReadOnly(settings.value("ReadOnly").toBool());
 
-    hexEdit->setHighlightingColor(settings.value("HighlightingColor").value<QColor>());
-    hexEdit->setAddressAreaColor(settings.value("AddressAreaColor").value<QColor>());
-    hexEdit->setSelectionColor(settings.value("SelectionColor").value<QColor>());
-    hexEdit->setFont(settings.value("WidgetFont").value<QFont>());
+    _hexEdit->setHighlightingColor(settings.value("HighlightingColor").value<QColor>());
+    _hexEdit->setAddressAreaColor(settings.value("AddressAreaColor").value<QColor>());
+    _hexEdit->setSelectionColor(settings.value("SelectionColor").value<QColor>());
+    _hexEdit->setFont(settings.value("WidgetFont").value<QFont>());
 
-    hexEdit->setAddressWidth(settings.value("AddressAreaWidth").toInt());
-    hexEdit->setBytesPerLine(settings.value("BytesPerLine").toInt());
+    _hexEdit->setAddressWidth(settings.value("AddressAreaWidth").toInt());
+    _hexEdit->setBytesPerLine(settings.value("BytesPerLine").toInt());
 }
 
 bool MainWindow::saveFile(const QString &fileName)
@@ -404,7 +431,7 @@ bool MainWindow::saveFile(const QString &fileName)
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QFile file(tmpFileName);
-    bool ok = hexEdit->write(file);
+    bool ok = _hexEdit->write(file);
     if (QFile::exists(fileName))
         ok = QFile::remove(fileName);
     if (ok)

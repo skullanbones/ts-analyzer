@@ -17,12 +17,19 @@ class QDragEnterEvent;
 class QDropEvent;
 QT_END_NAMESPACE
 
+// Forward declarations
+namespace Ui {
+    class MainWindow;
+}
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
     MainWindow();
+    ~MainWindow();
+    Ui::MainWindow* _ui;
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -63,7 +70,7 @@ private:
     QString curFile;
     QFile file;
     bool isUntitled;
-    QHexEdit *hexEdit;
+    QHexEdit *_hexEdit;
     
     // Menus
     QMenu *fileMenu;
@@ -98,7 +105,7 @@ private:
     // Widgets
     OptionsDialog *_optionsDialog;
     ParserDialog *_parserDialog;
-    SearchDialog *searchDialog;
+    SearchDialog *_searchDialog;
 
     QLabel *lbAddress, *lbAddressName;
     QLabel *lbOverwriteMode, *lbOverwriteModeName;
