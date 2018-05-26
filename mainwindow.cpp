@@ -194,6 +194,15 @@ void MainWindow::showParserDialog()
     _parserDialog->show();
 }
 
+void MainWindow::showParserWindow()
+{
+    // Dock widget use parser dialog
+    _parserDockWidget = new QDockWidget(tr("Parser"));
+    _parserDockWidget->setWidget(_parserDialog);
+    _parserDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    addDockWidget(Qt::RightDockWidgetArea, _parserDockWidget);
+}
+
 /*****************************************************************************/
 /* Private Methods */
 /*****************************************************************************/
@@ -207,16 +216,12 @@ void MainWindow::init()
     _hexEdit = new QHexEdit;
     _hexEdit->setFixedWidth(800); // Give space left to parser dialog...
 
-    _parserDialog = new ParserDialog(_hexEdit, this);
-
     // Connect events to parser
+    _parserDialog = new ParserDialog(_hexEdit, this);
     connect(this,SIGNAL(newFileLoaded()),_parserDialog,SLOT(on_parseButton_clicked()));
 
     // Dock widget use parser dialog
-    QDockWidget* parserDockWidget = new QDockWidget(tr("Parser"));
-    parserDockWidget->setWidget(_parserDialog);
-    parserDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    addDockWidget(Qt::RightDockWidgetArea, parserDockWidget);
+    showParserWindow();
 
     // Used before to create horizontal space
     QSplitter* mainSplitter = new QSplitter(Qt::Horizontal);
@@ -269,6 +274,7 @@ void MainWindow::createActions()
     exitAct->setStatusTip(tr("Exit the application"));
     connect(exitAct, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
 
+    // ----Edit menu----
     // Undo
     undoAct = new QAction(QIcon(":/images/undo.png"), tr("&Undo"), this);
     undoAct->setShortcuts(QKeySequence::Undo);
@@ -302,9 +308,15 @@ void MainWindow::createActions()
     findNextAct->setStatusTip(tr("Find next occurrence of the searched pattern"));
     connect(findNextAct, SIGNAL(triggered()), this, SLOT(findNext()));
 
+    // Options
     optionsAct = new QAction(tr("&Options"), this);
     optionsAct->setStatusTip(tr("Show the Dialog to select applications options"));
     connect(optionsAct, SIGNAL(triggered()), this, SLOT(showOptionsDialog()));
+
+    // ----View menu----
+    showParserWinAct = new QAction(tr("&Show Parser Window"), this);
+    showParserWinAct->setStatusTip(tr("Shows the transport stream parser dialog."));
+    connect(showParserWinAct, SIGNAL(triggered()), this, SLOT(showParserWindow()));
 
     // Parser
     _parserAct = new QAction(QIcon(":/images/parser_icon.png"), tr("&Transport stream"), this);
@@ -333,6 +345,10 @@ void MainWindow::createMenus()
     editMenu->addAction(optionsAct);
     editMenu->addSeparator();
     editMenu->addAction(_parserAct);
+
+    viewMenu = menuBar()->addMenu(tr("&View"));
+    viewMenu->addAction(showParserWinAct);
+
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);

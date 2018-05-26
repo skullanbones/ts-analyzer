@@ -55,6 +55,7 @@ private slots:
     void showOptionsDialog();
     void showSearchDialog();
     void showParserDialog();
+    void showParserWindow();
 
 private:
     void init();
@@ -79,6 +80,7 @@ private:
     // Menus
     QMenu *fileMenu;
     QMenu *editMenu;
+    QMenu *viewMenu;
     QMenu *helpMenu;
 
     // Toolbars
@@ -104,6 +106,8 @@ private:
     QAction *findAct;
     QAction *findNextAct;
 
+    QAction *showParserWinAct;
+
     QAction *_parserAct;
 
     // Widgets
@@ -114,6 +118,8 @@ private:
     QLabel *lbAddress, *lbAddressName;
     QLabel *lbOverwriteMode, *lbOverwriteModeName;
     QLabel *lbSize, *lbSizeName;
+
+    QDockWidget *_parserDockWidget;
 };
 
 #endif
