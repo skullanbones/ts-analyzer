@@ -17,17 +17,27 @@ class QDragEnterEvent;
 class QDropEvent;
 QT_END_NAMESPACE
 
+// Forward declarations
+namespace Ui {
+    class MainWindow;
+}
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
     MainWindow();
+    ~MainWindow();
+    Ui::MainWindow* _ui;
 
 protected:
     void closeEvent(QCloseEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
+
+signals:
+   void newFileLoaded();
 
 private slots:
     void about();
@@ -45,6 +55,7 @@ private slots:
     void showOptionsDialog();
     void showSearchDialog();
     void showParserDialog();
+    void showParserWindow();
 
 private:
     void init();
@@ -58,16 +69,18 @@ private:
     void setCurrentFile(const QString &fileName);
     QString strippedName(const QString &fullFileName);
     void writeSettings();
+    void emitNewFileLoaded();
 
     // Members
     QString curFile;
     QFile file;
     bool isUntitled;
-    QHexEdit *hexEdit;
+    QHexEdit *_hexEdit;
     
     // Menus
     QMenu *fileMenu;
     QMenu *editMenu;
+    QMenu *viewMenu;
     QMenu *helpMenu;
 
     // Toolbars
@@ -93,16 +106,20 @@ private:
     QAction *findAct;
     QAction *findNextAct;
 
+    QAction *showParserWinAct;
+
     QAction *_parserAct;
 
     // Widgets
     OptionsDialog *_optionsDialog;
     ParserDialog *_parserDialog;
-    SearchDialog *searchDialog;
+    SearchDialog *_searchDialog;
 
     QLabel *lbAddress, *lbAddressName;
     QLabel *lbOverwriteMode, *lbOverwriteModeName;
     QLabel *lbSize, *lbSizeName;
+
+    QDockWidget *_parserDockWidget;
 };
 
 #endif
