@@ -196,6 +196,13 @@ void MainWindow::showParserDialog()
 
 void MainWindow::showParserWindow()
 {
+    if (_parserDockWidget != nullptr)
+    {
+        if (_parserDockWidget->isVisible())
+        {
+            return; // If already visible we don't need create a new widget
+        }
+    }
     // Dock widget use parser dialog
     _parserDockWidget = new QDockWidget(tr("Parser"));
     _parserDockWidget->setWidget(_parserDialog);
@@ -214,7 +221,7 @@ void MainWindow::init()
     isUntitled = true;
 
     _hexEdit = new QHexEdit;
-    _hexEdit->setFixedWidth(800); // Give space left to parser dialog...
+    _hexEdit->setFixedWidth(1400); // Give space left to parser dialog...
 
     // Connect events to parser
     _parserDialog = new ParserDialog(_hexEdit, this);

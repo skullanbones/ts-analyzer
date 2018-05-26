@@ -84,7 +84,7 @@ void ParserDialog::PATCallback(PsiTable* table, void* hdl)
     buffer << *pat << std::endl;
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
-    qDebug() << str;
+    //qDebug() << str;
     //instance->printData(buffer.str());
 
     // Book keep all PATs for quality check
@@ -114,7 +114,7 @@ void ParserDialog::PMTCallback(PsiTable* table, void* hdl)
     buffer << *pmt << std::endl;
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
-    qDebug() << str;
+    //qDebug() << str;
     instance->printData(buffer.str());
 
     // TODO for now we always use the last PMT in the stream.
