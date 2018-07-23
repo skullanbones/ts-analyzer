@@ -5,3 +5,5 @@ build
 moc_*
 ui_*
 ts-analyzer
+Makefile
+qrc_application.cpp
