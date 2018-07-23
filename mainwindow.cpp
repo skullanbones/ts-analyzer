@@ -221,7 +221,7 @@ void MainWindow::init()
     isUntitled = true;
 
     _hexEdit = new QHexEdit;
-    _hexEdit->setFixedWidth(1400); // Give space left to parser dialog...
+    _hexEdit->setFixedWidth(800); // Give space left to parser dialog...
 
     // Connect events to parser
     _parserDialog = new ParserDialog(_hexEdit, this);
