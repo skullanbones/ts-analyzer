@@ -84,7 +84,7 @@ void ParserDialog::PATCallback(PsiTable* table, void* hdl)
     buffer << *pat << std::endl;
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
-    qDebug() << str;
+    //qDebug() << str;
     //instance->printData(buffer.str());
 
     // Book keep all PATs for quality check
@@ -114,7 +114,7 @@ void ParserDialog::PMTCallback(PsiTable* table, void* hdl)
     buffer << *pmt << std::endl;
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
-    qDebug() << str;
+    //qDebug() << str;
     instance->printData(buffer.str());
 
     // TODO for now we always use the last PMT in the stream.
@@ -136,8 +136,8 @@ void ParserDialog::parseTransportStream()
     uint64_t count = 0;
     int readIndex = 0;
     const uint8_t* packetsData = (const uint8_t*)data.data();
-    // Register callback
-    _tsDemuxer.addPsiPid(0, std::bind(&ParserDialog::PATCallback, std::placeholders::_1, std::placeholders::_2), (void*) this);
+    // Register PAT callback
+    _tsDemuxer.addPsiPid(TS_PACKET_PID_PAT, std::bind(&ParserDialog::PATCallback, std::placeholders::_1, std::placeholders::_2), (void*) this);
 
     if ((data.at(0) != 0x47) || (data.size() <= 0))
     {

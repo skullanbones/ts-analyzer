@@ -196,6 +196,13 @@ void MainWindow::showParserDialog()
 
 void MainWindow::showParserWindow()
 {
+    if (_parserDockWidget != nullptr)
+    {
+        if (_parserDockWidget->isVisible())
+        {
+            return; // If already visible we don't need create a new widget
+        }
+    }
     // Dock widget use parser dialog
     _parserDockWidget = new QDockWidget(tr("Parser"));
     _parserDockWidget->setWidget(_parserDialog);
