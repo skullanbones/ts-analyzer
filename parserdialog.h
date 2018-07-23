@@ -30,8 +30,8 @@ private:
     void init();
     void parseData();
     void printData(std::string str);
-    void static PATCallback(PsiTable* table, void* hdl);
-    void static PMTCallback(PsiTable* table, void* hdl);
+    void static PATCallback(PsiTable* table, uint16_t pid, void* hdl);
+    void static PMTCallback(PsiTable* table, uint16_t pid, void* hdl);
     void parseTransportStream();
     void buildTreeView();
     QTreeWidgetItem* addTreeRoot(QString name,
@@ -49,9 +49,9 @@ private:
 
     // Parsing stuff
     TsDemuxer _tsDemuxer;
-    std::vector<int> _pmtPids;
-    int _gPmtPid;
+    std::vector<uint16_t> _pmtPids;
     PmtTable _pmt;
+    bool _addedPmts;
 };
 
 
