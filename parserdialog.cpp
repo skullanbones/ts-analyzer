@@ -153,6 +153,7 @@ void ParserDialog::PMTCallback(PsiTable* table, uint16_t pid, void* hdl)
 void ParserDialog::parseTransportStream()
 {
     QByteArray data = _hexEdit->data();
+    _addedPmts = false;
 
     // If empty data, just return
     if (data.size() <= 0) {
