@@ -135,7 +135,7 @@ void ParserDialog::PATCallback(PsiTable* table, uint16_t pid, void* hdl)
 void ParserDialog::PMTCallback(PsiTable* table, uint16_t pid, void* hdl)
 {
     auto pmt = dynamic_cast<PmtTable*>(table);
-    ParserDialog* instance = reinterpret_cast<ParserDialog*>(hdl);
+    ParserDialog* diag = reinterpret_cast<ParserDialog*>(hdl);
 
     // Print out data
     std::stringstream buffer;
@@ -143,17 +143,21 @@ void ParserDialog::PMTCallback(PsiTable* table, uint16_t pid, void* hdl)
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
     //qDebug() << str;
-    instance->printData(buffer.str());
+    diag->printData(buffer.str());
 
     // TODO for now we always use the last PMT in the stream.
     // TODO need use something better...
-    instance->_pmt = *pmt; //  copy instance
+    diag->_pmt = *pmt; //  copy instance
+    diag->_pmtPid = pid;
+
+    diag->printData("PMTCAllback pid: " + std::to_string(pid));
 }
 
 void ParserDialog::parseTransportStream()
 {
     QByteArray data = _hexEdit->data();
     _addedPmts = false;
+    _pmtPids.clear();
 
     // If empty data, just return
     if (data.size() <= 0) {
@@ -196,7 +200,7 @@ void ParserDialog::buildTreeView()
 
     // Add root nodes
     QTreeWidgetItem* root = addTreeRoot("PAT", 0, "Program Association Table");
-    QTreeWidgetItem* pmtRoot = addTreeChild(root, "PMT", _pmtPids.at(2), "Program Map Table");
+    QTreeWidgetItem* pmtRoot = addTreeChild(root, "PMT", _pmtPid, "Program Map Table");
 
     for (StreamTypeHeader stream : _pmt.streams)
     {

@@ -52,6 +52,7 @@ private:
     std::vector<uint16_t> _pmtPids;
     PmtTable _pmt;
     bool _addedPmts;
+    uint16_t _pmtPid; // Returned PID from PMTCallback
 };
 
 
