@@ -26,6 +26,7 @@ SOURCES = \
 ### 3rd-party libs ###
 INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/qhexedit2
 INCLUDEPATH += "$$_PRO_FILE_PWD_"/ts-lib/include
+INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/plog-1.1.4/include
 
 # ts-lib
 HEADERS += \
@@ -36,7 +37,6 @@ HEADERS += \
     ts-lib/include/TsDemuxer.h \
     ts-lib/include/PsiTables.h \
     ts-lib/include/PesPacket.h \
-    ts-lib/include/GetBits.hh \
     ts-lib/include/GetBits.h \
     ts-lib/include/CommonTypes.h
 

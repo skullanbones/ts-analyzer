@@ -12,7 +12,8 @@
 
 ParserDialog::ParserDialog(QHexEdit *hexEdit, QWidget *parent) :
     QDialog(parent),
-    _ui(new Ui::Dialog)
+    _ui(new Ui::Dialog),
+    _addedPmts(false)
 {
   _ui->setupUi(this);
   init();
@@ -22,6 +23,11 @@ ParserDialog::ParserDialog(QHexEdit *hexEdit, QWidget *parent) :
 ParserDialog::~ParserDialog()
 {
   delete _ui;
+}
+
+void ParserDialog::setFileName(QString fileName)
+{
+    _fileName = fileName;
 }
 
 /*****************************************************************************/
@@ -74,10 +80,10 @@ void ParserDialog::printData(std::string inStr)
     _textBrowser->append(str);
 }
 
-void ParserDialog::PATCallback(PsiTable* table, void* hdl)
+void ParserDialog::PATCallback(PsiTable* table, uint16_t pid, void* hdl)
 {
     auto pat = dynamic_cast<PatTable*>(table);
-    ParserDialog* instance = reinterpret_cast<ParserDialog*>(hdl);
+    ParserDialog* diag = reinterpret_cast<ParserDialog*>(hdl);
 
     // Print out data
     std::stringstream buffer;
@@ -85,29 +91,56 @@ void ParserDialog::PATCallback(PsiTable* table, void* hdl)
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
     //qDebug() << str;
-    //instance->printData(buffer.str());
+    //diag->printData(buffer.str());
 
     // Book keep all PATs for quality check
-    instance->_pmtPids.push_back(pat->programs[0].program_map_PID);
-    float average = accumulate( instance->_pmtPids.begin(), instance->_pmtPids.end(), 0.0)/instance->_pmtPids.size();
-    instance->printData("average:");
-    instance->printData(std::to_string(average));
+    diag->_pmtPids.push_back(pat->programs[0].program_map_PID);
+    float average = accumulate( diag->_pmtPids.begin(), diag->_pmtPids.end(), 0.0)/diag->_pmtPids.size();
+    diag->printData("average:");
+    diag->printData(std::to_string(average));
     // Book keep number of programs, TODO use map std:pair<int, int> for PID, numberPrograms
 
-    // Register PMT callback only if PMT PID changed
-    int newPmtPid = pat->programs[0].program_map_PID;
-    if (instance->_gPmtPid != newPmtPid)
+    if (!diag->_addedPmts)
     {
-        instance->_gPmtPid = newPmtPid;
-        // std::cout << "Single Program Transport Stream PID: " << g_PMTPID << std::endl;
-        instance->_tsDemuxer.addPsiPid(instance->_gPmtPid, std::bind(&ParserDialog::PMTCallback, std::placeholders::_1, std::placeholders::_2), hdl);
+        int numPrograms = pat->programs.size();
+        if (numPrograms == 0)
+        {
+            qDebug() << "No programs found in PAT, exiting...";
+            exit(EXIT_SUCCESS);
+        }
+        else if (numPrograms == 1) // SPTS
+        {
+            qDebug() << "Found Single Program Transport Stream (SPTS).";
+            diag->_pmtPids.push_back(pat->programs[0].program_map_PID);
+        }
+        else if (numPrograms >= 1) // MPTS
+        {
+            qDebug() << "Found Multiple Program Transport Stream (MPTS).";
+            for (auto program : pat->programs)
+            {
+                if (program.type == ProgramType::PMT)
+                {
+                    diag->_pmtPids.push_back(program.program_map_PID);
+                }
+            }
+        }
+    }
+
+    if (!diag->_addedPmts && (diag->_pmtPids.size() != 0u))
+    {
+        for (auto pid : diag->_pmtPids)
+        {
+            qDebug() << "Adding PSI PID for parsing: " << pid;
+            diag->_tsDemuxer.addPsiPid(pid, std::bind(&PMTCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), hdl);
+        }
+        diag->_addedPmts = true;
     }
 }
 
-void ParserDialog::PMTCallback(PsiTable* table, void* hdl)
+void ParserDialog::PMTCallback(PsiTable* table, uint16_t pid, void* hdl)
 {
     auto pmt = dynamic_cast<PmtTable*>(table);
-    ParserDialog* instance = reinterpret_cast<ParserDialog*>(hdl);
+    ParserDialog* diag = reinterpret_cast<ParserDialog*>(hdl);
 
     // Print out data
     std::stringstream buffer;
@@ -115,16 +148,21 @@ void ParserDialog::PMTCallback(PsiTable* table, void* hdl)
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
     //qDebug() << str;
-    instance->printData(buffer.str());
+    diag->printData(buffer.str());
 
     // TODO for now we always use the last PMT in the stream.
     // TODO need use something better...
-    instance->_pmt = *pmt; //  copy instance
+    diag->_pmt = *pmt; //  copy instance
+    diag->_pmtPid = pid;
+
+    diag->printData("PMTCAllback pid: " + std::to_string(pid));
 }
 
 void ParserDialog::parseTransportStream()
 {
     QByteArray data = _hexEdit->data();
+    _addedPmts = false;
+    _pmtPids.clear();
 
     // If empty data, just return
     if (data.size() <= 0) {
@@ -137,7 +175,7 @@ void ParserDialog::parseTransportStream()
     int readIndex = 0;
     const uint8_t* packetsData = (const uint8_t*)data.data();
     // Register PAT callback
-    _tsDemuxer.addPsiPid(TS_PACKET_PID_PAT, std::bind(&ParserDialog::PATCallback, std::placeholders::_1, std::placeholders::_2), (void*) this);
+    _tsDemuxer.addPsiPid(TS_PACKET_PID_PAT, std::bind(&ParserDialog::PATCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), (void*) this);
 
     if ((data.at(0) != 0x47) || (data.size() <= 0))
     {
@@ -166,18 +204,21 @@ void ParserDialog::buildTreeView()
     _treeWidget->setHeaderLabels(ColumnNames);
 
     // Add root nodes
-    QTreeWidgetItem* root = addTreeRoot("PAT", 0, "Program Association Table");
-    QTreeWidgetItem* pmtRoot = addTreeChild(root, "PMT", _pmtPids.at(2), "Program Map Table");
+    QTreeWidgetItem* root = addTreeRoot(_fileName, 0, "File");
+
+    // Add child nodes
+    addTreeChild(root, "PAT", 0, "Program Association Table");
+    addTreeChild(root, "PMT", _pmtPid, "Program Map Table");
 
     for (StreamTypeHeader stream : _pmt.streams)
     {
         std::string str = StreamTypeToString[stream.stream_type];
         QString qstr = QString::fromStdString(str);
-        addTreeChild(pmtRoot, "PES", stream.elementary_PID, qstr);
+        addTreeChild(root, "PES", stream.elementary_PID, qstr);
     }
 
     // Add PRC PID
-    addTreeChild(pmtRoot, "PCR", _pmt.PCR_PID, "Program Clock Reference");
+    addTreeChild(root, "PCR", _pmt.PCR_PID, "Program Clock Reference");
 }
 
 QTreeWidgetItem* ParserDialog::addTreeRoot(QString name,

@@ -1,3 +1,9 @@
 ts-analyzer.pro.user
 build
 .qmake.stash
+*.o
+moc_*
+ui_*
+ts-analyzer
+Makefile
+qrc_application.cpp

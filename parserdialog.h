@@ -22,6 +22,7 @@ public:
     explicit ParserDialog(QHexEdit *hexEdit, QWidget *parent = 0);
     ~ParserDialog();
     Ui::Dialog* _ui;
+    void setFileName(QString fileName);
 
 private slots:
     void on_parseButton_clicked();
@@ -30,8 +31,8 @@ private:
     void init();
     void parseData();
     void printData(std::string str);
-    void static PATCallback(PsiTable* table, void* hdl);
-    void static PMTCallback(PsiTable* table, void* hdl);
+    void static PATCallback(PsiTable* table, uint16_t pid, void* hdl);
+    void static PMTCallback(PsiTable* table, uint16_t pid, void* hdl);
     void parseTransportStream();
     void buildTreeView();
     QTreeWidgetItem* addTreeRoot(QString name,
@@ -46,12 +47,14 @@ private:
     QHexEdit* _hexEdit;
     QTextBrowser* _textBrowser;
     QTreeWidget* _treeWidget;
+    QString _fileName;
 
     // Parsing stuff
     TsDemuxer _tsDemuxer;
-    std::vector<int> _pmtPids;
-    int _gPmtPid;
+    std::vector<uint16_t> _pmtPids;
     PmtTable _pmt;
+    bool _addedPmts;
+    uint16_t _pmtPid; // Returned PID from PMTCallback
 };
 
 

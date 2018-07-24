@@ -100,7 +100,8 @@ bool MainWindow::save()
 {
     if (isUntitled) {
         return saveAs();
-    } else {
+    }
+    else {
         return saveFile(curFile);
     }
 }
@@ -490,6 +491,8 @@ void MainWindow::setCurrentFile(const QString &fileName)
         setWindowFilePath("TsAnalyzer");
     else
         setWindowFilePath(curFile + " - TsAnalyzer");
+    _fileName = curFile.mid(curFile.lastIndexOf("/") + 1);
+    _parserDialog->setFileName(_fileName);
 }
 
 QString MainWindow::strippedName(const QString &fullFileName)
