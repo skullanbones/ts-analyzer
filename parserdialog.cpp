@@ -207,18 +207,18 @@ void ParserDialog::buildTreeView()
     QTreeWidgetItem* root = addTreeRoot(_fileName, 0, "File");
 
     // Add child nodes
-    QTreeWidgetItem* patRoot = addTreeChild(root, "PAT", 0, "Program Association Table");
-    QTreeWidgetItem* pmtRoot = addTreeChild(root, "PMT", _pmtPid, "Program Map Table");
+    addTreeChild(root, "PAT", 0, "Program Association Table");
+    addTreeChild(root, "PMT", _pmtPid, "Program Map Table");
 
     for (StreamTypeHeader stream : _pmt.streams)
     {
         std::string str = StreamTypeToString[stream.stream_type];
         QString qstr = QString::fromStdString(str);
-        addTreeChild(pmtRoot, "PES", stream.elementary_PID, qstr);
+        addTreeChild(root, "PES", stream.elementary_PID, qstr);
     }
 
     // Add PRC PID
-    addTreeChild(pmtRoot, "PCR", _pmt.PCR_PID, "Program Clock Reference");
+    addTreeChild(root, "PCR", _pmt.PCR_PID, "Program Clock Reference");
 }
 
 QTreeWidgetItem* ParserDialog::addTreeRoot(QString name,
