@@ -25,6 +25,11 @@ ParserDialog::~ParserDialog()
   delete _ui;
 }
 
+void ParserDialog::setFileName(QString fileName)
+{
+    _fileName = fileName;
+}
+
 /*****************************************************************************/
 /* Private Slots */
 /*****************************************************************************/
@@ -199,7 +204,10 @@ void ParserDialog::buildTreeView()
     _treeWidget->setHeaderLabels(ColumnNames);
 
     // Add root nodes
-    QTreeWidgetItem* root = addTreeRoot("PAT", 0, "Program Association Table");
+    QTreeWidgetItem* root = addTreeRoot(_fileName, 0, "File");
+
+    // Add child nodes
+    QTreeWidgetItem* patRoot = addTreeChild(root, "PAT", 0, "Program Association Table");
     QTreeWidgetItem* pmtRoot = addTreeChild(root, "PMT", _pmtPid, "Program Map Table");
 
     for (StreamTypeHeader stream : _pmt.streams)

@@ -22,6 +22,7 @@ public:
     explicit ParserDialog(QHexEdit *hexEdit, QWidget *parent = 0);
     ~ParserDialog();
     Ui::Dialog* _ui;
+    void setFileName(QString fileName);
 
 private slots:
     void on_parseButton_clicked();
@@ -46,6 +47,7 @@ private:
     QHexEdit* _hexEdit;
     QTextBrowser* _textBrowser;
     QTreeWidget* _treeWidget;
+    QString _fileName;
 
     // Parsing stuff
     TsDemuxer _tsDemuxer;

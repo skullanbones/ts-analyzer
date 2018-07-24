@@ -120,6 +120,8 @@ private:
     QLabel *lbSize, *lbSizeName;
 
     QDockWidget *_parserDockWidget;
+
+    QString _fileName;
 };
 
 #endif
