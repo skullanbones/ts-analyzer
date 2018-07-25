@@ -30,7 +30,6 @@ private slots:
 private:
     void init();
     void parseData();
-    void printData(std::string str);
     void static PATCallback(PsiTable* table, uint16_t pid, void* hdl);
     void static PMTCallback(PsiTable* table, uint16_t pid, void* hdl);
     void parseTransportStream();
