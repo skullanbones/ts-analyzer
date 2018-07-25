@@ -30,18 +30,18 @@ private slots:
 private:
     void init();
     void parseData();
-    void printData(std::string str);
     void static PATCallback(PsiTable* table, uint16_t pid, void* hdl);
     void static PMTCallback(PsiTable* table, uint16_t pid, void* hdl);
     void parseTransportStream();
     void buildTreeView();
+    void buildPatView(QTreeWidgetItem* patRoot);
+    void buildPmtView(QTreeWidgetItem* pmtRoot);
+    void buildPidView(QTreeWidgetItem* root);
     QTreeWidgetItem* addTreeRoot(QString name,
-                                 int PID,
                                  QString description);
 
     QTreeWidgetItem* addTreeChild(QTreeWidgetItem *parent,
                                   QString name,
-                                  int PID,
                                   QString description);
 
     QHexEdit* _hexEdit;
@@ -55,6 +55,8 @@ private:
     PmtTable _pmt;
     bool _addedPmts;
     uint16_t _pmtPid; // Returned PID from PMTCallback
+
+    PatTable _pat;
 };
 
 

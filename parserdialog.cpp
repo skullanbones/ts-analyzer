@@ -45,14 +45,13 @@ void ParserDialog::on_parseButton_clicked()
 /*****************************************************************************/
 void ParserDialog::init()
 {
-    _textBrowser = _ui->textBrowser;
     _treeWidget = _ui->treeWidget;
 }
 
 
 void ParserDialog::parseData()
 {
-    printData("(C) Copyright 2018 All rights reserverd Quantux AB.");
+    qDebug() << "(C) Copyright 2018 All rights reserverd Quantux AB.";
     // Start parsing
     QByteArray data = _hexEdit->data();
     if (data.size()) {
@@ -70,20 +69,16 @@ void ParserDialog::parseData()
         std::cout << info << std::endl;
         std::stringstream buffer;
         buffer << info << std::endl;
-        printData(buffer.str());
+        qDebug() << QString::fromStdString(buffer.str());
     }
 }
 
-void ParserDialog::printData(std::string inStr)
-{
-    QString str = QString::fromUtf8(inStr.c_str());
-    _textBrowser->append(str);
-}
 
 void ParserDialog::PATCallback(PsiTable* table, uint16_t pid, void* hdl)
 {
     auto pat = dynamic_cast<PatTable*>(table);
     ParserDialog* diag = reinterpret_cast<ParserDialog*>(hdl);
+    diag->_pat = *pat;
 
     // Print out data
     std::stringstream buffer;
@@ -91,13 +86,11 @@ void ParserDialog::PATCallback(PsiTable* table, uint16_t pid, void* hdl)
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
     //qDebug() << str;
-    //diag->printData(buffer.str());
 
     // Book keep all PATs for quality check
     diag->_pmtPids.push_back(pat->programs[0].program_map_PID);
     float average = accumulate( diag->_pmtPids.begin(), diag->_pmtPids.end(), 0.0)/diag->_pmtPids.size();
-    diag->printData("average:");
-    diag->printData(std::to_string(average));
+
     // Book keep number of programs, TODO use map std:pair<int, int> for PID, numberPrograms
 
     if (!diag->_addedPmts)
@@ -148,14 +141,11 @@ void ParserDialog::PMTCallback(PsiTable* table, uint16_t pid, void* hdl)
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
     //qDebug() << str;
-    diag->printData(buffer.str());
 
     // TODO for now we always use the last PMT in the stream.
     // TODO need use something better...
     diag->_pmt = *pmt; //  copy instance
     diag->_pmtPid = pid;
-
-    diag->printData("PMTCAllback pid: " + std::to_string(pid));
 }
 
 void ParserDialog::parseTransportStream()
@@ -165,9 +155,9 @@ void ParserDialog::parseTransportStream()
     _pmtPids.clear();
 
     // If empty data, just return
-    if (data.size() <= 0) {
-        printData("No data to parse... data().size:");
-        printData(std::to_string(data.size()));
+    if (data.size() <= 0)
+    {
+        qDebug() << "No data to parse... data().size:" << QString::number(data.size());
         return;
     }
 
@@ -197,45 +187,91 @@ void ParserDialog::parseTransportStream()
 void ParserDialog::buildTreeView()
 {
     _treeWidget->clear();
-    _treeWidget->setColumnCount(3);
+    _treeWidget->setColumnCount(2);
+    _treeWidget->setColumnWidth(0, 300);
     QStringList ColumnNames;
-    ColumnNames << "Table" << "PID" << "Description";
+    ColumnNames << "Description" << "Data";
 
     _treeWidget->setHeaderLabels(ColumnNames);
 
     // Add root nodes
-    QTreeWidgetItem* root = addTreeRoot(_fileName, 0, "File");
+    QTreeWidgetItem* root = addTreeRoot(_fileName, "");
 
     // Add child nodes
-    addTreeChild(root, "PAT", 0, "Program Association Table");
-    addTreeChild(root, "PMT", _pmtPid, "Program Map Table");
+    QTreeWidgetItem* psiRoot = addTreeChild(root, "PSI (Program Specific Information)", "");
+    QTreeWidgetItem* patRoot = addTreeChild(psiRoot, "PAT (Program Association Table)", "PID: " + QString::number(TS_PACKET_PID_PAT));
+    QTreeWidgetItem* pmtRoot = addTreeChild(psiRoot, "PMT (Program Map Table)", "PID: " + QString::number(_pmtPid));
+    buildPidView(root);
+    buildPatView(patRoot);
+    buildPmtView(pmtRoot);
+}
+
+void ParserDialog::buildPatView(QTreeWidgetItem* patRoot)
+{
+    addTreeChild(patRoot, "table_id", QString::number(_pat.table_id));
+    addTreeChild(patRoot, "section_syntax_indicator", QString::number(_pat.section_syntax_indicator));
+    addTreeChild(patRoot, "section_length", QString::number(_pat.section_length));
+    addTreeChild(patRoot, "transport_stream_id", QString::number(_pat.transport_stream_id));
+    addTreeChild(patRoot, "version_number", QString::number(_pat.version_number));
+    addTreeChild(patRoot, "current_next_indicator", QString::number(_pat.current_next_indicator));
+    addTreeChild(patRoot, "section_number", QString::number(_pat.section_number));
+    addTreeChild(patRoot, "last_section_number", QString::number(_pat.last_section_number));
+}
+
+void ParserDialog::buildPmtView(QTreeWidgetItem* pmtRoot)
+{
+    addTreeChild(pmtRoot, "table_id", QString::number(_pmt.table_id));
+    addTreeChild(pmtRoot, "section_syntax_indicator", QString::number(_pmt.section_syntax_indicator));
+    addTreeChild(pmtRoot, "section_length", QString::number(_pmt.section_length));
+    addTreeChild(pmtRoot, "transport_stream_id", QString::number(_pmt.transport_stream_id));
+    addTreeChild(pmtRoot, "version_number", QString::number(_pmt.version_number));
+    addTreeChild(pmtRoot, "current_next_indicator", QString::number(_pmt.current_next_indicator));
+    addTreeChild(pmtRoot, "section_number", QString::number(_pmt.section_number));
+    addTreeChild(pmtRoot, "last_section_number", QString::number(_pmt.last_section_number));
+    addTreeChild(pmtRoot, "PCR_PID", QString::number(_pmt.PCR_PID));
+    addTreeChild(pmtRoot, "program_info_length", QString::number(_pmt.program_info_length));
+
+    // Streams
+    QTreeWidgetItem* streamRoot = addTreeChild(pmtRoot, "streams", "");
 
     for (StreamTypeHeader stream : _pmt.streams)
     {
-        std::string str = StreamTypeToString[stream.stream_type];
-        QString qstr = QString::fromStdString(str);
-        addTreeChild(root, "PES", stream.elementary_PID, qstr);
+        addTreeChild(streamRoot, "stream_type", QString::fromStdString(StreamTypeToString[stream.stream_type]) + ", (" + QString::number(stream.stream_type) + ")");
+        addTreeChild(streamRoot, "elementary_PID", QString::number(stream.elementary_PID));
+        addTreeChild(streamRoot, "ES_info_length", QString::number(stream.ES_info_length));
     }
-
-    // Add PRC PID
-    addTreeChild(root, "PCR", _pmt.PCR_PID, "Program Clock Reference");
 }
 
+void ParserDialog::buildPidView(QTreeWidgetItem* root)
+{
+    QTreeWidgetItem* pidRoot = addTreeChild(root, "PIDs (Packet IDentifiers)", "");
+    addTreeChild(pidRoot, "PAT (Program Association Table)", QString::number(TS_PACKET_PID_PAT));
+    addTreeChild(pidRoot, "PMT (Program Map Table)", QString::number(_pmtPid));
+
+    // Add PRC PID
+    addTreeChild(pidRoot, "PCR (Program Clock Reference)", QString::number(_pmt.PCR_PID));
+
+    // Add streams
+    for (StreamTypeHeader stream : _pmt.streams)
+    {
+        addTreeChild(pidRoot, QString::fromStdString(StreamTypeToString[stream.stream_type]) + ", (" + QString::number(stream.stream_type) + ")",
+                QString::number(stream.elementary_PID));
+    }
+}
+
+
 QTreeWidgetItem* ParserDialog::addTreeRoot(QString name,
-                                           int PID,
                                            QString description)
 {
     // QTreeWidgetItem(QTreeWidget * parent, int type = Type)
     QTreeWidgetItem *treeItem = new QTreeWidgetItem(_treeWidget);
     treeItem->setText(0, name);
-    treeItem->setText(1, QString::number(PID));
-    treeItem->setText(2, description);
+    treeItem->setText(1, description);
     return treeItem;
 }
 
 QTreeWidgetItem* ParserDialog::addTreeChild(QTreeWidgetItem *parent,
                                 QString name,
-                                int PID,
                                 QString description)
 {
     // QTreeWidgetItem(QTreeWidget * parent, int type = Type)
@@ -243,8 +279,7 @@ QTreeWidgetItem* ParserDialog::addTreeChild(QTreeWidgetItem *parent,
 
     // QTreeWidgetItem::setText(int column, const QString & text)
     treeItem->setText(0, name);
-    treeItem->setText(1, QString::number(PID));
-    treeItem->setText(2, description);
+    treeItem->setText(1, description);
 
     // QTreeWidgetItem::addChild(QTreeWidgetItem * child)
     parent->addChild(treeItem);
