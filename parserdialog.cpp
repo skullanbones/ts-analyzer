@@ -199,6 +199,7 @@ void ParserDialog::buildTreeView()
 {
     _treeWidget->clear();
     _treeWidget->setColumnCount(2);
+    _treeWidget->setColumnWidth(0, 300);
     QStringList ColumnNames;
     ColumnNames << "Description" << "Data";
 
