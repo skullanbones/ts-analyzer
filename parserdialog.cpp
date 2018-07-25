@@ -210,19 +210,13 @@ void ParserDialog::buildTreeView()
 
     // Add child nodes
     QTreeWidgetItem* psiRoot = addTreeChild(root, "PSI (Program Specific Information)", "");
-    QTreeWidgetItem* patRoot = addTreeChild(psiRoot, "PAT (Program Association Table) PID:", QString::number(TS_PACKET_PID_PAT));
-    addTreeChild(psiRoot, "PMT", "Program Map Table" + _pmtPid);
+    QTreeWidgetItem* patRoot = addTreeChild(psiRoot, "PAT (Program Association Table)", "PID: " + QString::number(TS_PACKET_PID_PAT));
+    QTreeWidgetItem* pmtRoot = addTreeChild(psiRoot, "PMT (Program Map Table)", "PID: " + QString::number(_pmtPid));
     buildPatView(patRoot);
-
-    // PES
-    for (StreamTypeHeader stream : _pmt.streams)
-    {
-        QString qstr = QString::fromStdString(StreamTypeToString[stream.stream_type]) + " (" + QString::number(stream.elementary_PID) + ")";
-        addTreeChild(root, "PES", qstr);
-    }
+    buildPmtView(pmtRoot);
 
     // Add PRC PID
-    addTreeChild(root, "PCR (Program Clock Reference)", QString::number(_pmt.PCR_PID));
+    addTreeChild(root, "PCR (Program Clock Reference)", "PID: " + QString::number(_pmt.PCR_PID));
 }
 
 void ParserDialog::buildPatView(QTreeWidgetItem* patRoot)
@@ -233,6 +227,35 @@ void ParserDialog::buildPatView(QTreeWidgetItem* patRoot)
     addTreeChild(patRoot, "transport_stream_id", QString::number(_pat.transport_stream_id));
     addTreeChild(patRoot, "version_number", QString::number(_pat.version_number));
     addTreeChild(patRoot, "current_next_indicator", QString::number(_pat.current_next_indicator));
+    addTreeChild(patRoot, "section_number", QString::number(_pat.section_number));
+    addTreeChild(patRoot, "last_section_number", QString::number(_pat.last_section_number));
+}
+
+void ParserDialog::buildPmtView(QTreeWidgetItem* pmtRoot)
+{
+    addTreeChild(pmtRoot, "table_id", QString::number(_pmt.table_id));
+    addTreeChild(pmtRoot, "section_syntax_indicator", QString::number(_pmt.section_syntax_indicator));
+    addTreeChild(pmtRoot, "section_length", QString::number(_pmt.section_length));
+    addTreeChild(pmtRoot, "transport_stream_id", QString::number(_pmt.transport_stream_id));
+    addTreeChild(pmtRoot, "version_number", QString::number(_pmt.version_number));
+    addTreeChild(pmtRoot, "current_next_indicator", QString::number(_pmt.current_next_indicator));
+    addTreeChild(pmtRoot, "section_number", QString::number(_pmt.section_number));
+    addTreeChild(pmtRoot, "last_section_number", QString::number(_pmt.last_section_number));
+    addTreeChild(pmtRoot, "PCR_PID", QString::number(_pmt.PCR_PID));
+    addTreeChild(pmtRoot, "program_info_length", QString::number(_pmt.program_info_length));
+
+    // Streams
+    QTreeWidgetItem* streamRoot = addTreeChild(pmtRoot, "Streams", "");
+
+    for (StreamTypeHeader stream : _pmt.streams)
+    {
+        addTreeChild(streamRoot, "stream_type", QString::number(stream.stream_type) + ", " + QString::fromStdString(StreamTypeToString[stream.stream_type]));
+        addTreeChild(streamRoot, "elementary_PID", QString::number(stream.elementary_PID));
+        addTreeChild(streamRoot, "ES_info_length", QString::number(stream.ES_info_length));
+
+        //QString qstr =  "PID: " + QString::number(stream.elementary_PID);
+        //addTreeChild(streamRoot, QString::fromStdString(StreamTypeToString[stream.stream_type]), qstr);
+    }
 }
 
 

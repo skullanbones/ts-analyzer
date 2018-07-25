@@ -36,6 +36,7 @@ private:
     void parseTransportStream();
     void buildTreeView();
     void buildPatView(QTreeWidgetItem* patRoot);
+    void buildPmtView(QTreeWidgetItem* pmtRoot);
     QTreeWidgetItem* addTreeRoot(QString name,
                                  QString description);
 
