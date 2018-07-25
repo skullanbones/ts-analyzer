@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>485</width>
-    <height>587</height>
+    <width>581</width>
+    <height>795</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>300</y>
+     <y>770</y>
      <width>80</width>
      <height>25</height>
     </rect>
@@ -26,55 +26,13 @@
     <string>Parse Data</string>
    </property>
   </widget>
-  <widget class="QScrollArea" name="scrollArea">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>330</y>
-     <width>451</width>
-     <height>191</height>
-    </rect>
-   </property>
-   <property name="widgetResizable">
-    <bool>true</bool>
-   </property>
-   <widget class="QWidget" name="scrollAreaWidgetContents">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>449</width>
-      <height>189</height>
-     </rect>
-    </property>
-    <widget class="QTextBrowser" name="textBrowser">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>451</width>
-       <height>191</height>
-      </rect>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOn</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOn</enum>
-     </property>
-     <property name="autoFormatting">
-      <set>QTextEdit::AutoAll</set>
-     </property>
-    </widget>
-   </widget>
-  </widget>
   <widget class="QTreeWidget" name="treeWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>10</y>
-     <width>451</width>
-     <height>281</height>
+     <width>531</width>
+     <height>751</height>
     </rect>
    </property>
    <column>

@@ -45,14 +45,13 @@ void ParserDialog::on_parseButton_clicked()
 /*****************************************************************************/
 void ParserDialog::init()
 {
-    _textBrowser = _ui->textBrowser;
     _treeWidget = _ui->treeWidget;
 }
 
 
 void ParserDialog::parseData()
 {
-    printData("(C) Copyright 2018 All rights reserverd Quantux AB.");
+    qDebug() << "(C) Copyright 2018 All rights reserverd Quantux AB.";
     // Start parsing
     QByteArray data = _hexEdit->data();
     if (data.size()) {
@@ -70,15 +69,10 @@ void ParserDialog::parseData()
         std::cout << info << std::endl;
         std::stringstream buffer;
         buffer << info << std::endl;
-        printData(buffer.str());
+        qDebug() << QString::fromStdString(buffer.str());
     }
 }
 
-void ParserDialog::printData(std::string inStr)
-{
-    QString str = QString::fromUtf8(inStr.c_str());
-    _textBrowser->append(str);
-}
 
 void ParserDialog::PATCallback(PsiTable* table, uint16_t pid, void* hdl)
 {
@@ -92,13 +86,11 @@ void ParserDialog::PATCallback(PsiTable* table, uint16_t pid, void* hdl)
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
     //qDebug() << str;
-    //diag->printData(buffer.str());
 
     // Book keep all PATs for quality check
     diag->_pmtPids.push_back(pat->programs[0].program_map_PID);
     float average = accumulate( diag->_pmtPids.begin(), diag->_pmtPids.end(), 0.0)/diag->_pmtPids.size();
-    diag->printData("average:");
-    diag->printData(std::to_string(average));
+
     // Book keep number of programs, TODO use map std:pair<int, int> for PID, numberPrograms
 
     if (!diag->_addedPmts)
@@ -149,14 +141,11 @@ void ParserDialog::PMTCallback(PsiTable* table, uint16_t pid, void* hdl)
     std::string inStr = buffer.str();
     QString str = QString::fromUtf8(inStr.c_str());
     //qDebug() << str;
-    diag->printData(buffer.str());
 
     // TODO for now we always use the last PMT in the stream.
     // TODO need use something better...
     diag->_pmt = *pmt; //  copy instance
     diag->_pmtPid = pid;
-
-    diag->printData("PMTCAllback pid: " + std::to_string(pid));
 }
 
 void ParserDialog::parseTransportStream()
@@ -166,9 +155,9 @@ void ParserDialog::parseTransportStream()
     _pmtPids.clear();
 
     // If empty data, just return
-    if (data.size() <= 0) {
-        printData("No data to parse... data().size:");
-        printData(std::to_string(data.size()));
+    if (data.size() <= 0)
+    {
+        qDebug() << "No data to parse... data().size:" << QString::number(data.size());
         return;
     }
 
@@ -252,9 +241,6 @@ void ParserDialog::buildPmtView(QTreeWidgetItem* pmtRoot)
         addTreeChild(streamRoot, "stream_type", QString::number(stream.stream_type) + ", " + QString::fromStdString(StreamTypeToString[stream.stream_type]));
         addTreeChild(streamRoot, "elementary_PID", QString::number(stream.elementary_PID));
         addTreeChild(streamRoot, "ES_info_length", QString::number(stream.ES_info_length));
-
-        //QString qstr =  "PID: " + QString::number(stream.elementary_PID);
-        //addTreeChild(streamRoot, QString::fromStdString(StreamTypeToString[stream.stream_type]), qstr);
     }
 }
 
