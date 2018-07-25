@@ -36,6 +36,7 @@ private:
     void buildTreeView();
     void buildPatView(QTreeWidgetItem* patRoot);
     void buildPmtView(QTreeWidgetItem* pmtRoot);
+    void buildPidView(QTreeWidgetItem* root);
     QTreeWidgetItem* addTreeRoot(QString name,
                                  QString description);
 

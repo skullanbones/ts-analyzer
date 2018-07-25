@@ -201,11 +201,9 @@ void ParserDialog::buildTreeView()
     QTreeWidgetItem* psiRoot = addTreeChild(root, "PSI (Program Specific Information)", "");
     QTreeWidgetItem* patRoot = addTreeChild(psiRoot, "PAT (Program Association Table)", "PID: " + QString::number(TS_PACKET_PID_PAT));
     QTreeWidgetItem* pmtRoot = addTreeChild(psiRoot, "PMT (Program Map Table)", "PID: " + QString::number(_pmtPid));
+    buildPidView(root);
     buildPatView(patRoot);
     buildPmtView(pmtRoot);
-
-    // Add PRC PID
-    addTreeChild(root, "PCR (Program Clock Reference)", "PID: " + QString::number(_pmt.PCR_PID));
 }
 
 void ParserDialog::buildPatView(QTreeWidgetItem* patRoot)
@@ -234,13 +232,30 @@ void ParserDialog::buildPmtView(QTreeWidgetItem* pmtRoot)
     addTreeChild(pmtRoot, "program_info_length", QString::number(_pmt.program_info_length));
 
     // Streams
-    QTreeWidgetItem* streamRoot = addTreeChild(pmtRoot, "Streams", "");
+    QTreeWidgetItem* streamRoot = addTreeChild(pmtRoot, "streams", "");
 
     for (StreamTypeHeader stream : _pmt.streams)
     {
-        addTreeChild(streamRoot, "stream_type", QString::number(stream.stream_type) + ", " + QString::fromStdString(StreamTypeToString[stream.stream_type]));
+        addTreeChild(streamRoot, "stream_type", QString::fromStdString(StreamTypeToString[stream.stream_type]) + ", (" + QString::number(stream.stream_type) + ")");
         addTreeChild(streamRoot, "elementary_PID", QString::number(stream.elementary_PID));
         addTreeChild(streamRoot, "ES_info_length", QString::number(stream.ES_info_length));
+    }
+}
+
+void ParserDialog::buildPidView(QTreeWidgetItem* root)
+{
+    QTreeWidgetItem* pidRoot = addTreeChild(root, "PIDs (Packet IDentifiers)", "");
+    addTreeChild(pidRoot, "PAT (Program Association Table)", QString::number(TS_PACKET_PID_PAT));
+    addTreeChild(pidRoot, "PMT (Program Map Table)", QString::number(_pmtPid));
+
+    // Add PRC PID
+    addTreeChild(pidRoot, "PCR (Program Clock Reference)", QString::number(_pmt.PCR_PID));
+
+    // Add streams
+    for (StreamTypeHeader stream : _pmt.streams)
+    {
+        addTreeChild(pidRoot, QString::fromStdString(StreamTypeToString[stream.stream_type]) + ", (" + QString::number(stream.stream_type) + ")",
+                QString::number(stream.elementary_PID));
     }
 }
 
