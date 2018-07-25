@@ -35,13 +35,12 @@ private:
     void static PMTCallback(PsiTable* table, uint16_t pid, void* hdl);
     void parseTransportStream();
     void buildTreeView();
+    void buildPatView(QTreeWidgetItem* patRoot);
     QTreeWidgetItem* addTreeRoot(QString name,
-                                 int PID,
                                  QString description);
 
     QTreeWidgetItem* addTreeChild(QTreeWidgetItem *parent,
                                   QString name,
-                                  int PID,
                                   QString description);
 
     QHexEdit* _hexEdit;
@@ -55,6 +54,8 @@ private:
     PmtTable _pmt;
     bool _addedPmts;
     uint16_t _pmtPid; // Returned PID from PMTCallback
+
+    PatTable _pat;
 };
 
 

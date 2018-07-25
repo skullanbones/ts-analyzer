@@ -84,6 +84,7 @@ void ParserDialog::PATCallback(PsiTable* table, uint16_t pid, void* hdl)
 {
     auto pat = dynamic_cast<PatTable*>(table);
     ParserDialog* diag = reinterpret_cast<ParserDialog*>(hdl);
+    diag->_pat = *pat;
 
     // Print out data
     std::stringstream buffer;
@@ -197,45 +198,55 @@ void ParserDialog::parseTransportStream()
 void ParserDialog::buildTreeView()
 {
     _treeWidget->clear();
-    _treeWidget->setColumnCount(3);
+    _treeWidget->setColumnCount(2);
     QStringList ColumnNames;
-    ColumnNames << "Table" << "PID" << "Description";
+    ColumnNames << "Description" << "Data";
 
     _treeWidget->setHeaderLabels(ColumnNames);
 
     // Add root nodes
-    QTreeWidgetItem* root = addTreeRoot(_fileName, 0, "File");
+    QTreeWidgetItem* root = addTreeRoot(_fileName, "");
 
     // Add child nodes
-    addTreeChild(root, "PAT", 0, "Program Association Table");
-    addTreeChild(root, "PMT", _pmtPid, "Program Map Table");
+    QTreeWidgetItem* psiRoot = addTreeChild(root, "PSI (Program Specific Information)", "");
+    QTreeWidgetItem* patRoot = addTreeChild(psiRoot, "PAT (Program Association Table) PID:", QString::number(TS_PACKET_PID_PAT));
+    addTreeChild(psiRoot, "PMT", "Program Map Table" + _pmtPid);
+    buildPatView(patRoot);
 
+    // PES
     for (StreamTypeHeader stream : _pmt.streams)
     {
-        std::string str = StreamTypeToString[stream.stream_type];
-        QString qstr = QString::fromStdString(str);
-        addTreeChild(root, "PES", stream.elementary_PID, qstr);
+        QString qstr = QString::fromStdString(StreamTypeToString[stream.stream_type]) + " (" + QString::number(stream.elementary_PID) + ")";
+        addTreeChild(root, "PES", qstr);
     }
 
     // Add PRC PID
-    addTreeChild(root, "PCR", _pmt.PCR_PID, "Program Clock Reference");
+    addTreeChild(root, "PCR (Program Clock Reference)", QString::number(_pmt.PCR_PID));
 }
 
+void ParserDialog::buildPatView(QTreeWidgetItem* patRoot)
+{
+    addTreeChild(patRoot, "table_id", QString::number(_pat.table_id));
+    addTreeChild(patRoot, "section_syntax_indicator", QString::number(_pat.section_syntax_indicator));
+    addTreeChild(patRoot, "section_length", QString::number(_pat.section_length));
+    addTreeChild(patRoot, "transport_stream_id", QString::number(_pat.transport_stream_id));
+    addTreeChild(patRoot, "version_number", QString::number(_pat.version_number));
+    addTreeChild(patRoot, "current_next_indicator", QString::number(_pat.current_next_indicator));
+}
+
+
 QTreeWidgetItem* ParserDialog::addTreeRoot(QString name,
-                                           int PID,
                                            QString description)
 {
     // QTreeWidgetItem(QTreeWidget * parent, int type = Type)
     QTreeWidgetItem *treeItem = new QTreeWidgetItem(_treeWidget);
     treeItem->setText(0, name);
-    treeItem->setText(1, QString::number(PID));
-    treeItem->setText(2, description);
+    treeItem->setText(1, description);
     return treeItem;
 }
 
 QTreeWidgetItem* ParserDialog::addTreeChild(QTreeWidgetItem *parent,
                                 QString name,
-                                int PID,
                                 QString description)
 {
     // QTreeWidgetItem(QTreeWidget * parent, int type = Type)
@@ -243,8 +254,7 @@ QTreeWidgetItem* ParserDialog::addTreeChild(QTreeWidgetItem *parent,
 
     // QTreeWidgetItem::setText(int column, const QString & text)
     treeItem->setText(0, name);
-    treeItem->setText(1, QString::number(PID));
-    treeItem->setText(2, description);
+    treeItem->setText(1, description);
 
     // QTreeWidgetItem::addChild(QTreeWidgetItem * child)
     parent->addChild(treeItem);
