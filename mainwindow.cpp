@@ -20,7 +20,8 @@
 /* Public methods */
 /*****************************************************************************/
 MainWindow::MainWindow() :
-    _ui(new Ui::MainWindow)
+    _ui(new Ui::MainWindow),
+    _parserDockWidget(0)
 {
     _ui->setupUi(this);
     setAcceptDrops( true );
@@ -197,7 +198,7 @@ void MainWindow::showParserDialog()
 
 void MainWindow::showParserWindow()
 {
-    if (_parserDockWidget != nullptr)
+    if (_parserDockWidget != 0)
     {
         if (_parserDockWidget->isVisible())
         {
