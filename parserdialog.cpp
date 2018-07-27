@@ -13,11 +13,11 @@
 ParserDialog::ParserDialog(QHexEdit *hexEdit, QWidget *parent) :
     QDialog(parent),
     _ui(new Ui::Dialog),
-    _addedPmts(false)
+    _addedPmts(false),
+    _hexEdit(hexEdit)
 {
   _ui->setupUi(this);
   init();
-  _hexEdit = hexEdit;
 }
 
 ParserDialog::~ParserDialog()
@@ -40,14 +40,25 @@ void ParserDialog::on_parseButton_clicked()
     parseTransportStream();
 }
 
+void ParserDialog::on_threeItem_clicked(QTreeWidgetItem *item, int ind)
+{
+    qDebug() << "on_threeitem_clicked...";
+    qDebug() << item->text(ind) << ind;
+    QString strPid = item->text(1); // Column 1 is PID
+    // TODO make sure parent is PIDs
+    int pid = strPid.toInt();
+    qDebug() << "PID: " << pid;
+}
+
 /*****************************************************************************/
 /* Private Methods */
 /*****************************************************************************/
 void ParserDialog::init()
 {
     _treeWidget = _ui->treeWidget;
+    connect(_treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this,
+            SLOT(on_threeItem_clicked(QTreeWidgetItem*,int)));
 }
-
 
 void ParserDialog::parseData()
 {
