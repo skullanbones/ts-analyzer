@@ -197,7 +197,7 @@ void MainWindow::showParserDialog()
 
 void MainWindow::showParserWindow()
 {
-    if (_parserDockWidget != nullptr)
+    if (_parserDockWidget != 0)
     {
         if (_parserDockWidget->isVisible())
         {
