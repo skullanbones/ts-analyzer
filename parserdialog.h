@@ -26,6 +26,7 @@ public:
 
 private slots:
     void on_parseButton_clicked();
+    void on_threeItem_clicked(QTreeWidgetItem* item, int ind);
 
 private:
     void init();
