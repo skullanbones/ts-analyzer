@@ -8,7 +8,8 @@
 
 // Project files
 #include "qhexedit.h"
-#include "TsDemuxer.h"
+#include "public/mpeg2ts.h"
+#include "public/TsUtilities.h"
 
 // Forward declarations
 namespace Ui {
@@ -30,9 +31,7 @@ private slots:
 private:
     void init();
     void parseData();
-    void static PATCallback(PsiTable* table, uint16_t pid, void* hdl);
-    void static PMTCallback(PsiTable* table, uint16_t pid, void* hdl);
-    void parseTransportStream();
+
     void buildTreeView();
     void buildPatView(QTreeWidgetItem* patRoot);
     void buildPmtView(QTreeWidgetItem* pmtRoot);
@@ -50,13 +49,11 @@ private:
     QString _fileName;
 
     // Parsing stuff
-    TsDemuxer _tsDemuxer;
+    tsutil::TsUtilities _tsUtil;
     std::vector<uint16_t> _pmtPids;
-    PmtTable _pmt;
-    bool _addedPmts;
-    uint16_t _pmtPid; // Returned PID from PMTCallback
-
-    PatTable _pat;
+    mpeg2ts::PmtTable _pmt;
+    std::map<uint16_t, mpeg2ts::PmtTable> _pmtTables;
+    mpeg2ts::PatTable _pat;
 };
 
 
