@@ -1,6 +1,6 @@
 {
     "settings": {
-        "logLevel": "ERROR",
+        "logLevel": "DEBUG",
         "logFileName": "mpeg2ts_log.csv",
         "logFileMaxSize": 102400,
         "logFileMaxNumberOf": 10

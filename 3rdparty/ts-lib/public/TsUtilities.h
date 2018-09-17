@@ -1,7 +1,5 @@
 #pragma once
 
-#ifndef _TSUTILITIES_H
-#define _TSUTILITIES_H
 
 #include <cstdint>
 #include <cstddef>
@@ -116,10 +114,10 @@ private:
     void registerPesCallback();
 
     // Default constants
-    const LogLevel DEFAULT_LOG_LEVEL = LogLevel::ERROR;
-    const std::string LOGFILE_NAME = "mpeg2ts_log.csv";
-    int LOGFILE_MAXSIZE = 100 * 1024;
-    int LOGFILE_MAXNUMBEROF = 10;
+    static const LogLevel DEFAULT_LOG_LEVEL; // = LogLevel::DEBUG;
+    static const std::string LOGFILE_NAME; // = "mpeg2ts_log.csv";
+    static int LOGFILE_MAXSIZE; // = 100 * 1024;
+    static int LOGFILE_MAXNUMBEROF; // = 10;
 
     // members
     TsDemuxer mDemuxer;
@@ -131,18 +129,4 @@ private:
     std::map<uint16_t, std::vector<PesPacket>> mPesPackets;
 };
 
-//* Default Settings *//
-/* 
- * Used ONLY If NO JSON file found. 
- * NOTE! Change has no effect here. If you need change these 
- * please make sure you have settings.json file next to the library.
- */
-//const LogLevel TsUtilities::DEFAULT_LOG_LEVEL = LogLevel::DEBUG;
-//const std::string TsUtilities::LOGFILE_NAME = "mpeg2ts_log.csv";
-//int TsUtilities::LOGFILE_MAXSIZE = 100 * 1024;
-//int TsUtilities::LOGFILE_MAXNUMBEROF = 10;
-
 } // namespace tsutil
-
-
-#endif

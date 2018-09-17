@@ -24,7 +24,7 @@
 #include <cstdint>
 
 /// project files
-#include "Ts_IEC13818-1.h" // For TsHeader  Program
+#include <public/Ts_IEC13818-1.h> // For TsHeader  Program
 
 
 namespace mpeg2ts
