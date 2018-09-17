@@ -4,16 +4,15 @@
 // proj files
 #include "parserdialog.h"
 #include "ui_parserdialog.h"
-#include "TsPacketInfo.h"
-#include "TsParser.h"
 
 #include <iostream>
 #include <string>
+#include <sstream>
+
 
 ParserDialog::ParserDialog(QHexEdit *hexEdit, QWidget *parent) :
     QDialog(parent),
-    _ui(new Ui::Dialog),
-    _addedPmts(false)
+    _ui(new Ui::Dialog)
 {
   _ui->setupUi(this);
   init();
@@ -37,7 +36,7 @@ void ParserDialog::on_parseButton_clicked()
 {
     qDebug() << "parseButton clicked->start parsing.";
     parseData();
-    parseTransportStream();
+    buildTreeView();
 }
 
 /*****************************************************************************/
@@ -46,6 +45,8 @@ void ParserDialog::on_parseButton_clicked()
 void ParserDialog::init()
 {
     _treeWidget = _ui->treeWidget;
+    _pmtPids.clear();
+    _pmtTables.clear();
 }
 
 
@@ -63,126 +64,15 @@ void ParserDialog::parseData()
         }
 
         // Start parsing 1st packet data
-        TsPacketInfo info;
-        TsParser parser;
-        parser.parseTsPacketInfo((const uint8_t*)data.data(), info);
-        std::cout << info << std::endl;
-        std::stringstream buffer;
-        buffer << info << std::endl;
-        qDebug() << QString::fromStdString(buffer.str());
+        _tsUtil.parseTransportStreamData((const uint8_t*)data.data(), data.size());
+
+        _pat =  _tsUtil.getPatTable();
+        _pmtPids = _tsUtil.getPmtPids();
+        _pmtTables = _tsUtil.getPmtTables();
+        _pmt = _pmtTables[_pmtPids.at(0)]; // TODO assumes SPTS
     }
 }
 
-
-void ParserDialog::PATCallback(PsiTable* table, uint16_t pid, void* hdl)
-{
-    auto pat = dynamic_cast<PatTable*>(table);
-    ParserDialog* diag = reinterpret_cast<ParserDialog*>(hdl);
-    diag->_pat = *pat;
-
-    // Print out data
-    std::stringstream buffer;
-    buffer << *pat << std::endl;
-    std::string inStr = buffer.str();
-    QString str = QString::fromUtf8(inStr.c_str());
-    //qDebug() << str;
-
-    // Book keep all PATs for quality check
-    diag->_pmtPids.push_back(pat->programs[0].program_map_PID);
-    float average = accumulate( diag->_pmtPids.begin(), diag->_pmtPids.end(), 0.0)/diag->_pmtPids.size();
-
-    // Book keep number of programs, TODO use map std:pair<int, int> for PID, numberPrograms
-
-    if (!diag->_addedPmts)
-    {
-        int numPrograms = pat->programs.size();
-        if (numPrograms == 0)
-        {
-            qDebug() << "No programs found in PAT, exiting...";
-            exit(EXIT_SUCCESS);
-        }
-        else if (numPrograms == 1) // SPTS
-        {
-            qDebug() << "Found Single Program Transport Stream (SPTS).";
-            diag->_pmtPids.push_back(pat->programs[0].program_map_PID);
-        }
-        else if (numPrograms >= 1) // MPTS
-        {
-            qDebug() << "Found Multiple Program Transport Stream (MPTS).";
-            for (auto program : pat->programs)
-            {
-                if (program.type == ProgramType::PMT)
-                {
-                    diag->_pmtPids.push_back(program.program_map_PID);
-                }
-            }
-        }
-    }
-
-    if (!diag->_addedPmts && (diag->_pmtPids.size() != 0u))
-    {
-        for (auto pid : diag->_pmtPids)
-        {
-            qDebug() << "Adding PSI PID for parsing: " << pid;
-            diag->_tsDemuxer.addPsiPid(pid, std::bind(&PMTCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), hdl);
-        }
-        diag->_addedPmts = true;
-    }
-}
-
-void ParserDialog::PMTCallback(PsiTable* table, uint16_t pid, void* hdl)
-{
-    auto pmt = dynamic_cast<PmtTable*>(table);
-    ParserDialog* diag = reinterpret_cast<ParserDialog*>(hdl);
-
-    // Print out data
-    std::stringstream buffer;
-    buffer << *pmt << std::endl;
-    std::string inStr = buffer.str();
-    QString str = QString::fromUtf8(inStr.c_str());
-    //qDebug() << str;
-
-    // TODO for now we always use the last PMT in the stream.
-    // TODO need use something better...
-    diag->_pmt = *pmt; //  copy instance
-    diag->_pmtPid = pid;
-}
-
-void ParserDialog::parseTransportStream()
-{
-    QByteArray data = _hexEdit->data();
-    _addedPmts = false;
-    _pmtPids.clear();
-
-    // If empty data, just return
-    if (data.size() <= 0)
-    {
-        qDebug() << "No data to parse... data().size:" << QString::number(data.size());
-        return;
-    }
-
-    uint64_t count = 0;
-    int readIndex = 0;
-    const uint8_t* packetsData = (const uint8_t*)data.data();
-    // Register PAT callback
-    _tsDemuxer.addPsiPid(TS_PACKET_PID_PAT, std::bind(&ParserDialog::PATCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), (void*) this);
-
-    if ((data.at(0) != 0x47) || (data.size() <= 0))
-    {
-        qDebug() << "ERROR: 1'st byte not in sync!!!";
-        return;
-    }
-
-    while (readIndex < data.size())
-    {
-        _tsDemuxer.demux(packetsData + readIndex);
-        readIndex += TS_PACKET_SIZE;
-        count++;
-    }
-    qDebug() << "Found " << count << " ts packets.";
-
-    buildTreeView();
-}
 
 void ParserDialog::buildTreeView()
 {
@@ -200,7 +90,9 @@ void ParserDialog::buildTreeView()
     // Add child nodes
     QTreeWidgetItem* psiRoot = addTreeChild(root, "PSI (Program Specific Information)", "");
     QTreeWidgetItem* patRoot = addTreeChild(psiRoot, "PAT (Program Association Table)", "PID: " + QString::number(TS_PACKET_PID_PAT));
-    QTreeWidgetItem* pmtRoot = addTreeChild(psiRoot, "PMT (Program Map Table)", "PID: " + QString::number(_pmtPid));
+
+    // TODO assumes SPTS
+    QTreeWidgetItem* pmtRoot = addTreeChild(psiRoot, "PMT (Program Map Table)", "PID: " + QString::number(_pmtPids.at(0)));
     buildPidView(root);
     buildPatView(patRoot);
     buildPmtView(pmtRoot);
@@ -234,7 +126,7 @@ void ParserDialog::buildPmtView(QTreeWidgetItem* pmtRoot)
     // Streams
     QTreeWidgetItem* streamRoot = addTreeChild(pmtRoot, "streams", "");
 
-    for (StreamTypeHeader stream : _pmt.streams)
+    for (mpeg2ts::StreamTypeHeader stream : _pmt.streams)
     {
         addTreeChild(streamRoot, "stream_type", QString::fromStdString(StreamTypeToString[stream.stream_type]) + ", (" + QString::number(stream.stream_type) + ")");
         addTreeChild(streamRoot, "elementary_PID", QString::number(stream.elementary_PID));
@@ -246,13 +138,14 @@ void ParserDialog::buildPidView(QTreeWidgetItem* root)
 {
     QTreeWidgetItem* pidRoot = addTreeChild(root, "PIDs (Packet IDentifiers)", "");
     addTreeChild(pidRoot, "PAT (Program Association Table)", QString::number(TS_PACKET_PID_PAT));
-    addTreeChild(pidRoot, "PMT (Program Map Table)", QString::number(_pmtPid));
+    uint16_t pmtPid = _pmtPids.at(0);
+    addTreeChild(pidRoot, "PMT (Program Map Table)", QString::number(pmtPid));
 
     // Add PRC PID
     addTreeChild(pidRoot, "PCR (Program Clock Reference)", QString::number(_pmt.PCR_PID));
 
     // Add streams
-    for (StreamTypeHeader stream : _pmt.streams)
+    for (mpeg2ts::StreamTypeHeader stream : _pmt.streams)
     {
         addTreeChild(pidRoot, QString::fromStdString(StreamTypeToString[stream.stream_type]) + ", (" + QString::number(stream.stream_type) + ")",
                 QString::number(stream.elementary_PID));
@@ -269,6 +162,7 @@ QTreeWidgetItem* ParserDialog::addTreeRoot(QString name,
     treeItem->setText(1, description);
     return treeItem;
 }
+
 
 QTreeWidgetItem* ParserDialog::addTreeChild(QTreeWidgetItem *parent,
                                 QString name,

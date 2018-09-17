@@ -24,27 +24,16 @@ SOURCES = \
     parserdialog.cpp
 
 ### 3rd-party libs ###
+# ts-lib
+LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/ts-lib/libs" -lmpeg2ts
+INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/ts-lib
 INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/qhexedit2
-INCLUDEPATH += "$$_PRO_FILE_PWD_"/ts-lib/include
-INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/plog-1.1.4/include
 
 # ts-lib
 HEADERS += \
-    ts-lib/include/TsStatistics.h \
-    ts-lib/include/TsStandards.h \
-    ts-lib/include/TsParser.h \
-    ts-lib/include/TsPacketInfo.h \
-    ts-lib/include/TsDemuxer.h \
-    ts-lib/include/PsiTables.h \
-    ts-lib/include/PesPacket.h \
-    ts-lib/include/GetBits.h \
-    ts-lib/include/CommonTypes.h
-
-SOURCES += \
-    ts-lib/src/GetBits.cc \
-    ts-lib/src/TsDemuxer.cc \
-    ts-lib/src/TsParser.cc \
-    ts-lib/src/TsStatistics.cc \
+    3rdparty/ts-lib/public/mpeg2ts.h \
+    3rdparty/ts-lib/public/Ts_IEC13818-1.h \
+    3rdparty/ts-lib/public/TsUtilities.h \
 
 # hexedit2
 HEADERS += \
@@ -67,7 +56,8 @@ FORMS += \
     mainwindow.ui
 
 OTHER_FILES += \
-    README.md
+    README.md \
+    3rdparty/ts-lib/public/settings.json
 
 DEFINES += QHEXEDIT_EXPORTS
 
