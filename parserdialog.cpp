@@ -70,6 +70,7 @@ void ParserDialog::parseData()
         _pmtPids = _tsUtil.getPmtPids();
         _pmtTables = _tsUtil.getPmtTables();
         _pmt = _pmtTables[_pmtPids.at(0)]; // TODO assumes SPTS
+        _videoInfo = _tsUtil.getVideoMediaInfo();
     }
 }
 
@@ -96,6 +97,7 @@ void ParserDialog::buildTreeView()
     buildPidView(root);
     buildPatView(patRoot);
     buildPmtView(pmtRoot);
+    buildMediaView(root);
 }
 
 void ParserDialog::buildPatView(QTreeWidgetItem* patRoot)
@@ -179,3 +181,16 @@ QTreeWidgetItem* ParserDialog::addTreeChild(QTreeWidgetItem *parent,
     parent->addChild(treeItem);
     return treeItem;
 }
+
+void ParserDialog::buildMediaView(QTreeWidgetItem* root)
+{
+    QTreeWidgetItem* mediaRoot = addTreeChild(root, "VideoMediaInfo (Video Codec Info etc...)", "");
+    addTreeChild(mediaRoot, "Media Type ", QString::fromUtf8(_tsUtil.toString(_videoInfo.mediaType).c_str()));
+
+    addTreeChild(mediaRoot, "PID (Packet IDentifiers)", QString::number(_videoInfo.PID));
+    addTreeChild(mediaRoot, "Codec", QString::fromUtf8(_tsUtil.toString(_videoInfo.codec).c_str()));
+    QString resolution = QString::number(_videoInfo.width) + "x" + QString::number(_videoInfo.height);
+    addTreeChild(mediaRoot, "Resolution", resolution);
+    addTreeChild(mediaRoot, "Frame rate", QString::fromUtf8(_videoInfo.frameRate.c_str()));
+}
+
