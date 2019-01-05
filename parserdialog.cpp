@@ -70,6 +70,7 @@ void ParserDialog::parseData()
         _pmtPids = _tsUtil.getPmtPids();
         _pmtTables = _tsUtil.getPmtTables();
         _pmt = _pmtTables[_pmtPids.at(0)]; // TODO assumes SPTS
+        _videoInfo = _tsUtil.getVideoMediaInfo();
     }
 }
 
@@ -89,13 +90,14 @@ void ParserDialog::buildTreeView()
 
     // Add child nodes
     QTreeWidgetItem* psiRoot = addTreeChild(root, "PSI (Program Specific Information)", "");
-    QTreeWidgetItem* patRoot = addTreeChild(psiRoot, "PAT (Program Association Table)", "PID: " + QString::number(TS_PACKET_PID_PAT));
+    QTreeWidgetItem* patRoot = addTreeChild(psiRoot, "PAT (Program Association Table)", "PID: " + QString::number(mpeg2ts::TS_PACKET_PID_PAT));
 
     // TODO assumes SPTS
     QTreeWidgetItem* pmtRoot = addTreeChild(psiRoot, "PMT (Program Map Table)", "PID: " + QString::number(_pmtPids.at(0)));
     buildPidView(root);
     buildPatView(patRoot);
     buildPmtView(pmtRoot);
+    buildMediaView(root);
 }
 
 void ParserDialog::buildPatView(QTreeWidgetItem* patRoot)
@@ -128,7 +130,7 @@ void ParserDialog::buildPmtView(QTreeWidgetItem* pmtRoot)
 
     for (mpeg2ts::StreamTypeHeader stream : _pmt.streams)
     {
-        addTreeChild(streamRoot, "stream_type", QString::fromStdString(StreamTypeToString[stream.stream_type]) + ", (" + QString::number(stream.stream_type) + ")");
+        addTreeChild(streamRoot, "stream_type", QString::fromStdString(mpeg2ts::StreamTypeToString[stream.stream_type]) + ", (" + QString::number(stream.stream_type) + ")");
         addTreeChild(streamRoot, "elementary_PID", QString::number(stream.elementary_PID));
         addTreeChild(streamRoot, "ES_info_length", QString::number(stream.ES_info_length));
     }
@@ -137,7 +139,7 @@ void ParserDialog::buildPmtView(QTreeWidgetItem* pmtRoot)
 void ParserDialog::buildPidView(QTreeWidgetItem* root)
 {
     QTreeWidgetItem* pidRoot = addTreeChild(root, "PIDs (Packet IDentifiers)", "");
-    addTreeChild(pidRoot, "PAT (Program Association Table)", QString::number(TS_PACKET_PID_PAT));
+    addTreeChild(pidRoot, "PAT (Program Association Table)", QString::number(mpeg2ts::TS_PACKET_PID_PAT));
     uint16_t pmtPid = _pmtPids.at(0);
     addTreeChild(pidRoot, "PMT (Program Map Table)", QString::number(pmtPid));
 
@@ -147,7 +149,7 @@ void ParserDialog::buildPidView(QTreeWidgetItem* root)
     // Add streams
     for (mpeg2ts::StreamTypeHeader stream : _pmt.streams)
     {
-        addTreeChild(pidRoot, QString::fromStdString(StreamTypeToString[stream.stream_type]) + ", (" + QString::number(stream.stream_type) + ")",
+        addTreeChild(pidRoot, QString::fromStdString(mpeg2ts::StreamTypeToString[stream.stream_type]) + ", (" + QString::number(stream.stream_type) + ")",
                 QString::number(stream.elementary_PID));
     }
 }
@@ -179,3 +181,16 @@ QTreeWidgetItem* ParserDialog::addTreeChild(QTreeWidgetItem *parent,
     parent->addChild(treeItem);
     return treeItem;
 }
+
+void ParserDialog::buildMediaView(QTreeWidgetItem* root)
+{
+    QTreeWidgetItem* mediaRoot = addTreeChild(root, "VideoMediaInfo (Video Codec Info etc...)", "");
+    addTreeChild(mediaRoot, "Media Type ", QString::fromUtf8(_tsUtil.toString(_videoInfo.mediaType).c_str()));
+
+    addTreeChild(mediaRoot, "PID (Packet IDentifiers)", QString::number(_videoInfo.PID));
+    addTreeChild(mediaRoot, "Codec", QString::fromUtf8(_tsUtil.toString(_videoInfo.codec).c_str()));
+    QString resolution = QString::number(_videoInfo.width) + "x" + QString::number(_videoInfo.height);
+    addTreeChild(mediaRoot, "Resolution", resolution);
+    addTreeChild(mediaRoot, "Frame rate", QString::fromUtf8(_videoInfo.frameRate.c_str()));
+}
+

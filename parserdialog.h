@@ -36,6 +36,7 @@ private:
     void buildPatView(QTreeWidgetItem* patRoot);
     void buildPmtView(QTreeWidgetItem* pmtRoot);
     void buildPidView(QTreeWidgetItem* root);
+    void buildMediaView(QTreeWidgetItem* root);
     QTreeWidgetItem* addTreeRoot(QString name,
                                  QString description);
 
@@ -52,8 +53,9 @@ private:
     tsutil::TsUtilities _tsUtil;
     std::vector<uint16_t> _pmtPids;
     mpeg2ts::PmtTable _pmt;
-    std::map<uint16_t, mpeg2ts::PmtTable> _pmtTables;
+    std::map<int, mpeg2ts::PmtTable> _pmtTables;
     mpeg2ts::PatTable _pat;
+    tsutil::VideoMediaInfo _videoInfo;
 };
 
 
