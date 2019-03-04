@@ -12,4 +12,4 @@ jobs:
           command: qmake
       - run:
           name: Build
-          command: make
+          command: make -j 36
