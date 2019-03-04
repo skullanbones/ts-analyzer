@@ -26,14 +26,14 @@ SOURCES = \
 ### 3rd-party libs ###
 # ts-lib
 LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/ts-lib/libs" -lmpeg2ts
-INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/ts-lib
+INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/ts-lib/include
 INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/qhexedit2
 
 # ts-lib
 HEADERS += \
-    3rdparty/ts-lib/public/mpeg2ts.h \
-    3rdparty/ts-lib/public/Ts_IEC13818-1.h \
-    3rdparty/ts-lib/public/TsUtilities.h \
+    3rdparty/ts-lib/include/mpeg2ts/mpeg2ts.h \
+    3rdparty/ts-lib/include/mpeg2ts/Ts_IEC13818-1.h \
+    3rdparty/ts-lib/include/mpeg2ts/TsUtilities.h \
 
 # hexedit2
 HEADERS += \
