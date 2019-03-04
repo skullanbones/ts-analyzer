@@ -8,8 +8,8 @@
 
 // Project files
 #include "qhexedit.h"
-#include "include/mpeg2ts.h"
-#include "include/TsUtilities.h"
+#include "mpeg2ts/mpeg2ts.h"
+#include "mpeg2ts/TsUtilities.h"
 
 // Forward declarations
 namespace Ui {
