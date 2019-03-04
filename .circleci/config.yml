@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: rabits/qt:5.10-desktop
+      - image: heliconwave/qt5:latest
     steps:
       - checkout
       - run: git submodule sync
@@ -12,4 +12,4 @@ jobs:
           command: qmake
       - run:
           name: Build
-          command: make
+          command: make -j 36
