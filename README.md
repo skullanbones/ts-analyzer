@@ -5,16 +5,6 @@ Visualize content of a transport stream.
 Install Qt Creator or Qt SDK and open the ts-analyzer.pro project file.
 From the Qt Creator IDE you can now edit this project.
 
-You also need to load the ts-lib submodule
-```
-git submodule init
-git submodule update
-```
-or
-```
-git submodule update --init
-```
-in order to be able to run this project successfully.
 
 ## Git stategy
 Note we use the most advanced git strategy NVIE. Please consult
@@ -53,4 +43,4 @@ The different types of branches we may use are:
 * Hotfix branches
 
 This image shows the branching strategy:
-![Git branching model](https://github.com/skullanbones/ts-analyzer/tree/master/images/git-model@2x.png)
+![Git branching model](images/git-model@2x.png)
