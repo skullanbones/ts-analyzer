@@ -66,3 +66,7 @@ DEFINES += QHEXEDIT_EXPORTS
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+
+#ifndef Q_OS_WIN32
+DEFINES += MPEG2TS_STATIC_DEFINE
+#endif
