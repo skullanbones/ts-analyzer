@@ -63,8 +63,16 @@ void ParserDialog::parseData()
             qDebug() << "ERROR: 1'st byte not in sync!!!";
         }
 
+        // Phase lock to sync byte for 1st-packet
+        int pos = 0;
+        while (data.at(pos) != mpeg2ts::TS_PACKET_SYNC_BYTE)
+        {
+            qDebug() << "need to sync...";
+            ++pos;
+        }
+
         // Start parsing 1st packet data
-        _tsUtil.parseTransportStreamData((const uint8_t*)data.data(), data.size());
+        _tsUtil.parseTransportStreamData((const uint8_t*)data.data() + pos, data.size() - pos);
 
         _pat =  _tsUtil.getPatTable();
         _pmtPids = _tsUtil.getPmtPids();
