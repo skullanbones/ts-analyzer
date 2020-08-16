@@ -24,16 +24,21 @@ SOURCES = \
     parserdialog.cpp
 
 ### 3rd-party libs ###
-# ts-lib
-LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/ts-lib/lib" -lmpeg2ts
-INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/ts-lib/include
+# mpeg2ts
+release {
+    LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/mpeg2ts/lib" -lmpeg2ts
+}
+debug {
+    LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/mpeg2ts/lib" -lmpeg2ts-d
+}
+INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/mpeg2ts/include
 INCLUDEPATH += "$$_PRO_FILE_PWD_"/3rdparty/qhexedit2
 
-# ts-lib
+# mpeg2ts
 HEADERS += \
-    3rdparty/ts-lib/include/mpeg2ts/mpeg2ts.h \
-    3rdparty/ts-lib/include/mpeg2ts/Ts_IEC13818-1.h \
-    3rdparty/ts-lib/include/mpeg2ts/TsUtilities.h \
+    3rdparty/mpeg2ts/include/mpeg2ts/mpeg2ts.h \
+    3rdparty/mpeg2ts/include/mpeg2ts/Ts_IEC13818-1.h \
+    3rdparty/mpeg2ts/include/mpeg2ts/TsUtilities.h \
 
 # hexedit2
 HEADERS += \
@@ -57,7 +62,7 @@ FORMS += \
 
 OTHER_FILES += \
     README.md \
-    3rdparty/ts-lib/include/settings.json
+    3rdparty/mpeg2ts/include/settings.json
 
 DEFINES += QHEXEDIT_EXPORTS
 
