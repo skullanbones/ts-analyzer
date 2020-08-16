@@ -26,16 +26,3 @@ workflows:
   build-via-docker:
     jobs:
       - build-via-docker
-
-# jobs:
-#   build:
-#     docker:
-#       - image: heliconwave/qt5:latest
-#     steps:
-#       - checkout
-#       - run:
-#           name: Qmake
-#           command: qmake
-#       - run:
-#           name: Build
-#           command: make -j 36
