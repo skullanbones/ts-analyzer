@@ -1,9 +1,31 @@
-/**
- * Strictly Confidential - Do not duplicate or distribute without written
- * permission from authors
- */
-
-#pragma once
+/*****************************************************************
+*
+*    Copyright © 2017-2020 kohnech, lnwhome All rights reserved
+*
+*    mpeg2ts - mpeg2ts lib
+*
+*    This file is part of mpeg2ts (Mpeg2 Transport Stream Library).
+*
+*    Unless you have obtained mpeg2ts under a different license,
+*    this version of mpeg2ts is mpeg2ts|GPL.
+*    Mpeg2ts|GPL is free software; you can redistribute it and/or
+*    modify it under the terms of the GNU General Public License as
+*    published by the Free Software Foundation; either version 2,
+*    or (at your option) any later version.
+*
+*    Mpeg2ts|GPL is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with mpeg2ts|GPL; see the file COPYING.  If not, write to the
+*    Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+*    02111-1307, USA.
+*
+********************************************************************/
+#ifndef _MPEG2TS_H
+#define _MPEG2TS_H
 
 #include "mpeg2ts_export.h"  // For __declspec(dllexport/dllimport)
 
@@ -13,7 +35,7 @@
 #include <memory>
 #include <vector>
 
-/// project files
+// project files
 #include "Ts_IEC13818-1.h" // For TsHeader  Program
 
 
@@ -30,8 +52,8 @@ typedef std::map<int, PidStatistic> PidStatisticsMap;
 
 
 /*!
- * @class PES-Packet prototype containing buffer
- *
+ * @brief PES-Packet prototype containing buffer
+ * @ref ISO/IEC 13818-1 (Table 2-21 – PES packet)
  */
 struct PesPacket
 {
@@ -40,7 +62,6 @@ struct PesPacket
     uint16_t PES_packet_length;
 
     // Extended packet
-    // TODO move out by inheritance?
     bool PES_scrambling_control;
     bool PES_priority;
     bool data_alignment_indicator;
@@ -106,7 +127,8 @@ public:
 };
 
 /*!
- * PAT table
+ * @brief PAT Table – Program association section
+ * @ref ISO/IEC 13818-1 (Table 2-30)
  */
 class PatTable : public PsiTable
 {
@@ -121,6 +143,10 @@ public:
     MPEG2TS_EXPORT bool operator!=(const PatTable& rhs) const;
 };
 
+/*!
+ * @brief Part of PMT Table
+ * @ref ISO/IEC 13818-1 (Table 2-33)
+ */
 struct StreamTypeHeader
 {
     StreamType stream_type;
@@ -135,7 +161,8 @@ struct StreamTypeHeader
 };
 
 /*!
- * PMT Table.
+ * @brief PMT Table – Transport stream program map section 
+ * @ref ISO/IEC 13818-1 (Table 2-33)
  */
 class PmtTable : public PsiTable
 {
@@ -160,13 +187,20 @@ public:
     MPEG2TS_EXPORT bool operator!=(const PmtTable& rhs) const;
 };
 
+/*!
+ * @brief Conditional access table
+ * @ref Table 2-32 – Conditional access section
+ * @todo Not implemented
+ */
 class CatTable : public PsiTable
 {
 public:
     std::vector<CatDescriptor> descriptors;
 };
 
-
+/*!
+ * @brief Parsed meta data for 1 TS packet
+ */
 class TsPacketInfo
 {
 public:
@@ -229,7 +263,10 @@ public:
     MPEG2TS_EXPORT friend std::ostream& operator<<(std::ostream& ss, const TsPacketInfo& rhs);
 };
 
-
+/*!
+ * @brief Statistics per PID with time-stamp variations (DTS, PTS, PCR) and 
+ * continuity counters.
+ */
 struct PidStatistic
 {
     static constexpr const uint8_t INVALID_CC{ 16 };
@@ -264,6 +301,9 @@ struct PidStatistic
     uint64_t numberOfMissingDts;
 };
 
+/*!
+ * @brief Count TS packets statistics
+ */
 struct TsCounters
 {
     uint64_t mTsPacketCounter{ 0 };
@@ -276,7 +316,10 @@ typedef std::function<void(const ByteVector& rawTable, PsiTable* table, int pid,
 typedef std::function<void(const ByteVector& rawPes, const PesPacket& pes, int pid, void* hdl)> PesCallBackFnc;
 typedef std::function<void(const uint8_t* packet, TsPacketInfo tsPacketInfo, void* hdl)> TsCallBackFnc;
 
-/// @brief Demux ts packets into PSI and PES (plus TS pass through)
+/*!
+ * @brief mpeg2ts API
+ * @brief Demux ts packets into PSI and PES (plus TS pass through)
+ */
 class TsDemuxer
 {
 public:
@@ -344,6 +387,9 @@ public:
     MPEG2TS_EXPORT unsigned getMpeg2tsLibVersionPatch() const;
 
     MPEG2TS_EXPORT unsigned getMpeg2tsLibVersionTweak() const;
+    
+    MPEG2TS_EXPORT void setOrigin(int64_t origin);
+    MPEG2TS_EXPORT int64_t getOrigin(int pid);
 
 protected:
     std::map<int, PsiCallBackFnc> mPsiCallbackMap;
@@ -353,7 +399,11 @@ protected:
 
 private:
     std::unique_ptr<TsParser> mParser;
+
+    int64_t mOrigin = 0;
 };
 
 
 } // namespace mpeg2ts
+
+#endif /* _MPEG2TS_H */

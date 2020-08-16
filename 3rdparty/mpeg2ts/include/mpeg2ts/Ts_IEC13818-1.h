@@ -1,3 +1,30 @@
+/*****************************************************************
+*
+*    Copyright © 2017-2020 kohnech, lnwhome All rights reserved
+*
+*    mpeg2ts - mpeg2ts lib
+*
+*    This file is part of mpeg2ts (Mpeg2 Transport Stream Library).
+*
+*    Unless you have obtained mpeg2ts under a different license,
+*    this version of mpeg2ts is mpeg2ts|GPL.
+*    Mpeg2ts|GPL is free software; you can redistribute it and/or
+*    modify it under the terms of the GNU General Public License as
+*    published by the Free Software Foundation; either version 2,
+*    or (at your option) any later version.
+*
+*    Mpeg2ts|GPL is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with mpeg2ts|GPL; see the file COPYING.  If not, write to the
+*    Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+*    02111-1307, USA.
+*
+********************************************************************/
+
 /*!
  * References in this file are taken from ISO/IEC 13818-1:2015
  * Fifth edition 2015-07-01
@@ -8,8 +35,8 @@
  *
  * All references here after reference to this document.
  */
-
-#pragma once
+#ifndef _TS_IEC13818_1_H
+#define _TS_IEC13818_1_H
 
 #include <iostream>
 #include <map>
@@ -44,8 +71,8 @@ const int PMT_PACKET_OFFSET_LENGTH = 9;
 const int PMT_STREAM_TYPE_LENGTH = 5;
 
 /*!
- * transport stream header
- * 4 bytes, see Table 2-2 – Transport packet of this Recommendation.
+ * @brief 4 bytes, transport stream header
+ * @ref see Table 2-2 – Transport packet of this Recommendation.
  */
 struct TsHeader
 {
@@ -87,8 +114,8 @@ struct TsHeader
 
 
 /*!
- * adaptation field header
- * 2 bytes, see table 2-6 Transport stream adaptation field
+ * @brief 2 bytes, adaptation field header
+ * @ref see table 2-6 Transport stream adaptation field
  */
 struct TsAdaptationFieldHeader
 {
@@ -105,7 +132,8 @@ struct TsAdaptationFieldHeader
 };
 
 /*!
- * Adaptation field control values, see table 2-5
+ * @brief Adaptation field control values, see table 2-5
+ * @ref Table 2-5 – Adaptation field control values
  */
 enum TsAdaptationFieldControl
 {
@@ -133,10 +161,9 @@ enum class ProgramType
     UserDefined
 };
 
-/*! @brief Program streams
- *
- * Table 2-30 – Program association section *
- *
+/*! 
+ * @brief Program streams
+ * @ref Table 2-30 – Program association section
  */
 struct Program
 {
@@ -162,10 +189,9 @@ struct Program
 };
 
 
-/*! @brief Table_id assignment values
- *
- * Table 2-31 - table_id assignment values
- *
+/*! 
+ * @brief Table_id assignment values
+ * @ref Table 2-31 - table_id assignment values
  */
 enum PsiTableId
 {
@@ -195,10 +221,9 @@ static std::map<PsiTableId, std::string> PsiTableToString =
   { PSI_TABLE_ID_INCOMPLETE, "PSI_TABLE_ID_INCOMPLETE" },
   { PSI_TABLE_ID_FORBIDDEN, "PSI_TABLE_ID_FORBIDDEN" } };
 
-/*! @brief Stream type
- *
- * Table 2-34 - Stream type assignments.
- *
+/*!
+ * @brief Table 2-34 - Stream type assignments.
+ * @ref ISO/IEC 13818-1: Table 2-34
  */
 enum StreamType
 {
@@ -243,10 +268,9 @@ static std::map<int, std::string> StreamTypeToString =
   { STREAMTYPE_Any, "STREAMTYPE_Any" } };
 
 
-/*! @brief Stream_id assignments
- *
- *[ISO 13818-1] Table 2-22 – Stream_id assignments
- *
+/*! 
+ * @brief Stream_id assignments
+ * @ref ISO/IEC 13818-1: Table 2-22 – Stream_id assignments
  */
 enum StreamId
 {
@@ -263,8 +287,10 @@ enum StreamId
     STREAM_ID_program_stream_directory = 0xFF
 };
 
-/*! @brief Descriptor tags Table 2-45
- */
+/*! 
+* @brief Descriptor tags Table 2-45
+* @ref ISO/IEC 13818-1: Table 2-45
+*/
 
 enum struct DescriptorTag : uint32_t
 {
@@ -322,14 +348,20 @@ enum struct DescriptorTag : uint32_t
     user_private_178 = 178
 };
 
-/*! From 2.6.1 */
+/*! 
+* @brief Base class for Descriptors 
+* @ref ISO/IEC 13818-1: Section 2.6.1 
+*/
 struct Descriptor
 {
     uint8_t descriptor_tag;
     uint8_t descriptor_length;
 };
 
-/*! Table 2-59 – Conditional access descriptor */
+/*! 
+* @brief Table 2-59 – Conditional access descriptor 
+* @ref ISO/IEC 13818-1: Table 2-59
+*/
 struct CatDescriptor : public Descriptor
 {
     uint16_t CA_system_ID;
@@ -337,14 +369,21 @@ struct CatDescriptor : public Descriptor
     uint16_t CA_PID;
 };
 
-/*! Table 2-65 – Maximum bitrate descriptor */
+/*! 
+* @brief Table 2-65 – Maximum bitrate descriptor 
+* @ref ISO/IEC 13818-1: Table 2-65
+*/
 struct MaximumBitrateDescriptor : public Descriptor
 {
     uint8_t reserved;
     uint32_t maximum_bitrate;
 };
 
-/*! Table 2-84 – Metadata pointer descriptor */
+/*! 
+* @brief Table 2-84 – Metadata pointer descriptor 
+* @ref ISO/IEC 13818-1: Table 2-84
+* @todo Not implemented
+*/
 struct Metadata_pointer_descriptor : public Descriptor
 {
     uint16_t metadata_application_format;
@@ -352,3 +391,5 @@ struct Metadata_pointer_descriptor : public Descriptor
 };
 
 } // namespace mpeg2ts
+
+#endif /* _TS_IEC13818_1_H */
