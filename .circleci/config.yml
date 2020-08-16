@@ -14,7 +14,7 @@ commands:
 executors:
   docker-executor:
     docker:
-      - image: heliconwave/qt5:latest
+      - image: heliconwave/circleci-ubuntu-18.04:latest
 
 jobs:
   build-via-docker:
