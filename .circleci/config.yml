@@ -1,15 +1,28 @@
-version: 2
-jobs:
+version: 2.1
+
+commands:
   build:
-    docker:
-      - image: heliconwave/qt5:latest
     steps:
       - checkout
-      - run: git submodule sync
-      - run: git submodule update --init
       - run:
           name: Qmake
           command: qmake
       - run:
           name: Build
           command: make -j 36
+
+executors:
+  docker-executor:
+    docker:
+      - image: heliconwave/qt5:latest
+
+jobs:
+  build-via-docker:
+    executor: docker-executor
+    steps:
+      - build
+
+workflows:
+  build-via-docker:
+    jobs:
+      - build-via-docker
