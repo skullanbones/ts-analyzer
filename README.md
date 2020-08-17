@@ -1,4 +1,5 @@
 # ts-analyzer
+[![CircleCI](https://circleci.com/gh/skullanbones/ts-analyzer.svg?style=svg&circle-token=4f236e7746e89b951c22d2f955b4011ea5e46356)](https://circleci.com/gh/skullanbones/ts-analyzer)
 Visualize content of a transport stream.
 
 ## How to run it
