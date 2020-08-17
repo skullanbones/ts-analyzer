@@ -52,7 +52,7 @@ void ParserDialog::init()
 
 void ParserDialog::parseData()
 {
-    qDebug() << "(C) Copyright 2018 All rights reserverd Quantux AB.";
+    qDebug() << "Copyright © 2018-2020 kohnech. See GNU GPL v2.1 License.";
     // Start parsing
     QByteArray data = _hexEdit->data();
     if (data.size()) {

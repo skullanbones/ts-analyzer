@@ -70,7 +70,21 @@ void MainWindow::about()
    QMessageBox::about(this, tr("About"),
             tr("<b>Transport Stream Analyzer</b> analyzes the content"
                "of MPEG-2 transport stream used in video content delivery.<br/><br/>"
-               "<i>(C) Copyright 2018 Quantux AB. All rights reserved </i>"));
+               "<i>Copyright © 2018-2020 kohnech.</i><br/><br/>"
+               "This library is free software; you can redistribute it<br/>"
+                "and/or modify it under the terms of the GNU Lesser General<br/>"
+                "Public License as published by the Free Software Foundation;<br/>"
+                "either version 2.1 of the License, or (at your option) any <br/>"
+                "later version.<br/><br/>"
+                "This library is distributed in the hope that it will be <br/>"
+                "useful, but WITHOUT ANY WARRANTY; without even the implied <br/>"
+                "warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR <br/>"
+                "PURPOSE.  See the GNU Lesser General Public License for more <br/>"
+                "details.<br/><br/>"
+                "You should have received a copy of the GNU Lesser General <br/>"
+                "Public License along with this library; if not, write to the <br/>"
+                "Free Software Foundation, Inc., 51 Franklin Street, Fifth <br/>"
+                "Floor, Boston, MA  02110-1301  USA"));
 }
 
 void MainWindow::dataChanged()
