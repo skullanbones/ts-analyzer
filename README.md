@@ -5,7 +5,7 @@ Visualize content of a transport stream.
 Install Qt Creator or Qt SDK and open the ts-analyzer.pro project file.
 From the Qt Creator IDE you can now edit this project.
 
-Alternatively it's possible building via commandline:
+Alternatively it's possible building via commandline (requires Qt SDK):
     
     qmake
     make
