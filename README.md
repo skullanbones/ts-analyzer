@@ -1,46 +1,46 @@
 # ts-analyzer
+[![CircleCI](https://circleci.com/gh/skullanbones/ts-analyzer.svg?style=svg&circle-token=4f236e7746e89b951c22d2f955b4011ea5e46356)](https://circleci.com/gh/skullanbones/ts-analyzer)
+
 Visualize content of a transport stream.
 
 ## How to run it
 Install Qt Creator or Qt SDK and open the ts-analyzer.pro project file.
 From the Qt Creator IDE you can now edit this project.
 
+Alternatively it's possible building via commandline (requires Qt SDK):
+    
+    qmake
+    make
+    ./ts-analyzer
 
-## Git stategy
-Note we use the most advanced git strategy NVIE. Please consult
-CM before you commit to this repo. In short there are 2 type categories
-of branches *main branches* and *supporting branches*.
 
+This image shows the GUI of ts-analyzer app:
+![Ts Analyzer](images/ts-analyzer-gui.png)
 
-### Main branches
-The central repo holds two main branches with an infinite lifetime:
-* master
-* develop
+## License
+This app is GNU GPL v2.1:
 
-The master branch at origin should be familiar to every Git user.
-Parallel to the master branch, another branch exists called develop.
+    Copyright © 2018-2020  kohnech
 
-We consider origin/master to be the main branch where the source code of
-HEAD always reflects a production-ready state.
+    This library is free software; you can redistribute it
+    and/or modify it under the terms of the GNU Lesser General
+    Public License as published by the Free Software Foundation;
+    either version 2.1 of the License, or (at your option) any 
+    later version.
 
-We consider origin/develop to be the main branch where the source code of
-HEAD always reflects a state with the latest delivered development changes
-for the next release. Some would call this the “integration branch”.
-This is where any automatic nightly builds are built from.
+    This library is distributed in the hope that it will be 
+    useful, but WITHOUT ANY WARRANTY; without even the implied 
+    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+    PURPOSE.  See the GNU Lesser General Public License for more 
+    details.
 
-### Supporting branches
-Next to the main branches master and develop, our development model uses
-a variety of supporting branches to aid parallel development between
-team members, ease tracking of features, prepare for production releases
-and to assist in quickly fixing live production problems.
-Unlike the main branches, these branches always have a limited life time,
-since they will be removed eventually.
+    You should have received a copy of the GNU Lesser General 
+    Public License along with this library; if not, write to the 
+    Free Software Foundation, Inc., 51 Franklin Street, Fifth 
+    Floor, Boston, MA  02110-1301  USA
 
-The different types of branches we may use are:
+## Dependencies
+This app uses 2 3rd-party libs:
 
-* Feature branches
-* Release branches
-* Hotfix branches
-
-This image shows the branching strategy:
-![Git branching model](images/git-model@2x.png)
+* [QHexEdit2](https://github.com/Simsys/qhexedit2) (Direct compiled and same license inherited since GNU GPL v2.1).
+* [mpeg2ts](https://github.com/skullanbones/mpeg2ts) (Dynamically linked, GNU GPL 2)
